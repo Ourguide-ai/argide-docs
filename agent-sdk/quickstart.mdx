@@ -152,13 +152,17 @@ Any backend works — the endpoint just forwards the pair to `POST {apiUrl}/api/
 ## 4. Run a task
 
 ```ts
-const { taskId } = await ArgideAgent.do({ goal: "cancel my subscription" });
+ArgideAgent.onActivity((activity) => {
+  if (activity.kind === "task") {
+    // { kind: "task", taskId, status, summary, needs }
+    console.log(activity.status, activity.summary);
+  }
+});
 
-const outcome = await ArgideAgent.check({ taskId });
-// { taskId, status, summary, needs }
+await ArgideAgent.do({ goal: "cancel my subscription" });
 ```
 
-`status` is one of `running`, `needs_input`, `completed`, `failed`, or `cancelled`; `summary` is a string or `null`. A `needs_input` task is waiting for the user — see [When the agent needs the user](/agent-sdk/running-tasks#when-the-agent-needs-the-user).
+The SDK sends a `task` event when the task finishes or stops to wait for the user, after a page reload too. `status` is one of `needs_input`, `completed`, `failed`, or `cancelled`; `summary` is a string or `null`. A `needs_input` task is waiting for the user — see [When the agent needs the user](/agent-sdk/running-tasks#when-the-agent-needs-the-user).
 
 `do()` resolves as soon as the task exists — not when it finishes — and waits internally for init and the claim to complete first, so you never have to check "is it ready".
 
@@ -166,7 +170,7 @@ const outcome = await ArgideAgent.check({ taskId });
 
 ```ts
 const off = ArgideAgent.onActivity((activity) => {
-  // { kind: "tool-start" | "tool-end" | "idle", ... }
+  // { kind: "tool-start" | "tool-end" | "idle" | "task", ... }
   console.log(activity);
 });
 ```
