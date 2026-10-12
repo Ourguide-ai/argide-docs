@@ -28,14 +28,9 @@ Pass the messages in your stack's own format: OpenAI, Anthropic, Gemini, the Ver
 
 ## One goal at a time
 
-Each session runs at most one task. What `do()` does while a task is running depends on the goal:
+Each session runs at most one task. A `do()` while a task is running rejects with `409 SESSION_BUSY`. Wait for the task to settle, or `cancel()` it first.
 
-| While a task is running... | Result |
-| -------------------------- | ------ |
-| `do()` with a **different** goal | Rejects with `409 SESSION_BUSY`. Wait for the task to settle, or `cancel()` it first. |
-| `do()` with the **same** goal | Treated as a rejoin — resolves with the same `taskId`. |
-
-A task that is waiting for the user (`needs_input`) doesn't hold the session: `do()` starts a new task, even with the same goal. To continue the waiting task, call `resume()`.
+A task that is waiting for the user (`needs_input`) doesn't hold the session: `do()` starts a new task. To continue the waiting task, call `resume()`.
 
 ## Get the result
 

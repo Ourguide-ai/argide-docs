@@ -23,7 +23,7 @@ Initializes the page's runtime. Idempotent and safe under React StrictMode — c
 
 ## ArgideAgent.do(\{ goal, messages \})
 
-Starts a task, or rejoins the running one.
+Starts a task.
 
 | Parameter | Type | Required | Description |
 | --------- | ---- | -------- | ----------- |
@@ -31,8 +31,7 @@ Starts a task, or rejoins the running one.
 | `messages` | `object[]` | No | Your chatbot's conversation, in your stack's own message format. Only user and assistant text is sent. See [Pass the conversation](/agent-sdk/running-tasks#pass-the-conversation). |
 
 - Returns `Promise<{ taskId: string }>` — resolves as soon as the task exists, not when it finishes. Waits internally for init and the claim first.
-- Rejects with `409 SESSION_BUSY` when called with a *different* goal while a task is running.
-- Called with the *same* goal as the running task, it resolves with the same `taskId` (rejoin).
+- Rejects with `409 SESSION_BUSY` while a task is running.
 
 ## ArgideAgent.check(\{ taskId \})
 
@@ -92,7 +91,7 @@ Tears down and resets the runtime. The next `init()` starts fresh. Normal pages 
 
 | Error | Status | Surfaces from | What it means |
 | ----- | ------ | ------------- | ------------- |
-| `SESSION_BUSY` | 409 | `do()`, `resume()` | A different task is still running. Wait or `cancel()` first. |
+| `SESSION_BUSY` | 409 | `do()`, `resume()` | Another task is still running. Wait or `cancel()` first. |
 | `ALREADY_CLAIMED` | 409 | the claim endpoint | The session was already claimed. Reserved as the stolen-pairing-code signal — do not retry. |
 | `INPUTS_REQUIRED` | 400 | `resume()` | The task is waiting for `inputs`, and a field is missing or has the wrong type, or a `message` was sent. |
 | `MESSAGE_REQUIRED` | 400 | `resume()` | The task takes a `message` (it is waiting for a user action, or is `completed`), and `inputs` were sent. |
