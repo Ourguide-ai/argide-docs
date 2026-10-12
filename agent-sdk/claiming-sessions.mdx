@@ -27,6 +27,7 @@ Pass `claim` to `init` and the SDK calls it at exactly the right moment — only
 ArgideAgent.init({
   apiUrl: "https://api.argide.ai",
   productId: "YOUR_PRODUCT_ID",
+  assetOrigin: "https://dashboard.argide.ai",
   claim: async ({ sessionId, pairingCode }) => {
     const res = await fetch("/api/argide/claim", {
       method: "POST",
