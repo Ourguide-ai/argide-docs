@@ -3,7 +3,7 @@ title: "Running Tasks"
 description: "Start, monitor, cancel, and recover agent tasks"
 ---
 
-A task is one goal handed to the agent. This page covers the full lifecycle: starting a task, the one-goal-at-a-time rule, reading the outcome, answering a task that waits for the user, cancelling, and what happens when the agent navigates the page out from under itself.
+A task is one goal handed to the agent. This page covers the full lifecycle: starting a task, the one-goal-at-a-time rule, getting the result, answering a task that waits for the user, cancelling, and what happens when the agent navigates the page out from under itself.
 
 ## Start a task
 
@@ -37,35 +37,39 @@ Each session runs at most one task. What `do()` does while a task is running dep
 
 A task that is waiting for the user (`needs_input`) doesn't hold the session: `do()` starts a new task, even with the same goal. To continue the waiting task, call `resume()`.
 
-## Read the outcome
+## Get the result
 
 ```ts
-const outcome = await ArgideAgent.check({ taskId });
-// { taskId, status, summary, needs }
+ArgideAgent.onActivity((activity) => {
+  if (activity.kind !== "task") return;
+  // { kind: "task", taskId, status, summary, needs }
+  showResult(activity);
+});
 ```
 
-`status` is one of `running`, `needs_input`, `completed`, `failed`, or `cancelled`; `summary` is a string or `null`.
+When the task finishes, or stops to wait for the user, the SDK sends a `task` event. `status` is one of `needs_input`, `completed`, `failed`, or `cancelled`; `summary` is a string or `null`. The SDK reads the task from Argide itself, after a page reload too, so you don't poll. A result that arrives before any listener is subscribed is handed to the first listener that subscribes.
 
-`check()` is the authoritative source for how a task ended. Activity events (below) are ephemeral and per-tab; when you need to decide what actually happened, use `check()`.
+A `failed` event with `summary: null` can also mean this tab can no longer reach the task. To read a task yourself, call `check()`.
 
 ## When the agent needs the user
 
-A task can pause to wait for the user: the agent needs a value only they can give, or they must do something on the page first, such as logging in. `check()` then returns `status: "needs_input"`, with `summary` saying what the agent needs. Answer with `resume()`, which continues the same task.
+A task can pause to wait for the user: the agent needs a value only they can give, or they must do something on the page first, such as logging in. The SDK then sends a `task` event with `status: "needs_input"`, and `summary` says what the agent needs. Answer with `resume()`, which continues the same task.
 
 ```ts
-const outcome = await ArgideAgent.check({ taskId });
-
-if (outcome.status === "needs_input") {
-  if (outcome.needs?.kind === "input") {
-    // Show outcome.summary and a form built from outcome.needs.fields.
-    // Here the task asked for one field, named "Role".
-    await ArgideAgent.resume({ taskId, inputs: { Role: "admin" } });
-  } else {
-    // "user_action": show outcome.summary, then resume once the user has done it.
-    await ArgideAgent.resume({ taskId, message: "Done" });
+ArgideAgent.onActivity((activity) => {
+  if (activity.kind === "task" && activity.status === "needs_input") {
+    // Show activity.summary. For needs.kind "input", build a form from activity.needs.fields.
+    showQuestion(activity);
   }
-}
+});
+
+// When the user answers. Here the task asked for one field, named "Role":
+await ArgideAgent.resume({ inputs: { Role: "admin" } });
+// For needs.kind "user_action", once the user has done it:
+await ArgideAgent.resume({ message: "Done" });
 ```
+
+`resume()`, `check()`, and `cancel()` act on the current task when you pass no `taskId`.
 
 For `needs.kind === "input"`, send a value for every field in `needs.fields`, keyed by its `name`:
 
@@ -76,27 +80,28 @@ For `needs.kind === "input"`, send a value for every field in `needs.fields`, ke
 | `date` | A `YYYY-MM-DD` string |
 | `checkbox` | `true` or `false` |
 
-Activity events don't announce a wait, so poll `check()` while a task is running.
+The SDK announces a question once, even after a page load. If your page can reload while a task waits, keep the question in your own state, such as `sessionStorage`, until you call `resume()`.
 
 ## End a task early
 
 ```ts
-await ArgideAgent.cancel({ taskId });
+await ArgideAgent.cancel();
 ```
+
+Cancelling also sends the task's `cancelled` event.
 
 ## Handle errors
 
-`check()`, `cancel()`, and `resume()` reject on any non-2xx response. The rejection is a plain `Error` — there's no `.status` or `.code` property to branch on — but its message carries the HTTP status, so inspect the message:
+`check()`, `cancel()`, and `resume()` reject on any non-2xx response, with the HTTP status on the error's `status`:
 
 ```ts
 try {
-  await ArgideAgent.cancel({ taskId });
+  await ArgideAgent.cancel();
 } catch (err) {
-  const message = err instanceof Error ? err.message : String(err);
-  // e.g. "agent task cancel failed: HTTP 404" or "agent task cancel failed: HTTP 409"
-  if (message.includes("HTTP 404")) {
+  const status = (err as { status?: number }).status;
+  if (status === 404) {
     // unknown task, or a task belonging to another session
-  } else if (message.includes("HTTP 409")) {
+  } else if (status === 409) {
     // the task is already terminal
   }
 }
@@ -108,14 +113,14 @@ Three signals, three jobs:
 
 | Signal | What it tells you | Use it for |
 | ------ | ----------------- | ---------- |
-| `onActivity(cb)` | Ephemeral, per-tab events as the agent works: `{ kind: "tool-start" \| "tool-end" \| "idle", ... }` | Live "agent is working" UI |
+| `onActivity(cb)` | The task's result (`task`), plus ephemeral, per-tab events as the agent works: `tool-start`, `tool-end`, `idle` | Showing the result, and a live "agent is working" UI |
 | `onStateChange` (an `init` option) | Facade lifecycle: `"starting" \| "ready" \| "error" \| "stopped"` | Enabling or disabling your entry points |
-| `check({ taskId })` | The authoritative task outcome | Deciding what happened |
+| `check()` | A task's status, read on demand | Checking a task yourself |
 
 ```ts
 const off = ArgideAgent.onActivity((activity) => {
-  // { kind: "tool-start" | "tool-end" | "idle", ... }
-  console.log(activity);
+  if (activity.kind === "task") return; // results: see Get the result
+  setWorking(activity.kind !== "idle");
 });
 // later, to unsubscribe: off()
 ```

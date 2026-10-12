@@ -24,15 +24,15 @@ sequenceDiagram
     Page->>Argide: do({ goal: "cancel my subscription" })
     Argide->>Agent: run task
     Agent->>Page: clicks, fills forms, navigates
-    Page->>Argide: check({ taskId })
-    Argide-->>Page: { status, summary }
+    Page->>Argide: the SDK reads the task
+    Argide-->>Page: task event on onActivity — { status, summary }
 ```
 
 1. **The SDK mints a session.** `init()` runs in the tab and receives `{ sessionId, pairingCode }`.
 2. **Your server claims it.** The browser forwards the pair to your backend, which exchanges it for a claim using your `ak_live_...` API key. Until then, the session can't run tasks.
 3. **Your chatbot delegates a goal.** `do({ goal })` hands the agent a job and resolves with a `taskId` as soon as the task exists.
 4. **The agent drives the tab.** Clicking, filling forms, navigating — in the user's own session, right in front of them.
-5. **You read the outcome.** `check({ taskId })` returns the authoritative `{ status, summary }`.
+5. **You get the result.** It arrives as a `task` event on `onActivity`, after a page reload too, so you don't poll.
 
 ## Security model
 

@@ -36,9 +36,10 @@ Starts a task, or rejoins the running one.
 
 ## ArgideAgent.check(\{ taskId \})
 
-Fetches the authoritative outcome.
+Reads a task's status from Argide: the current task, or the one you pass.
 
 - Returns `Promise<{ taskId, status, summary, needs }>`. `status` is one of `running`, `needs_input`, `completed`, `failed`, or `cancelled`; `summary` is a string or `null`. `needs` is set only while `status` is `needs_input` — see [When the agent needs the user](/agent-sdk/running-tasks#when-the-agent-needs-the-user).
+- `taskId` is optional. Without it, `check()` reads the current task, and rejects when there is none.
 - Rejects on any non-2xx, including `404` for a task that is unknown or belongs to another session.
 
 ## ArgideAgent.resume(\{ taskId, inputs \| message \})
@@ -47,7 +48,7 @@ Continues a task that is waiting for the user, or sends a follow-up to a complet
 
 | Parameter | Type | Required | Description |
 | --------- | ---- | -------- | ----------- |
-| `taskId` | `string` | Yes | The task to continue. |
+| `taskId` | `string` | No | The task to continue. Defaults to the current task. |
 | `inputs` | `Record<string, string \| string[] \| boolean>` | One of `inputs` or `message` | Answers `needs.kind === "input"`: a value for every field, keyed by its `name`. See [field values](/agent-sdk/running-tasks#when-the-agent-needs-the-user). |
 | `message` | `string` | One of `inputs` or `message` | Answers `needs.kind === "user_action"`, or follows up on a `completed` task. |
 
@@ -56,23 +57,24 @@ Continues a task that is waiting for the user, or sends a follow-up to a complet
 
 ## ArgideAgent.cancel(\{ taskId \})
 
-Ends the task early.
+Ends the task early: the current task, or the one you pass.
 
 - The returned promise resolves with the same `{ taskId, status, summary }` outcome shape as `check()`.
+- For the current task, `onActivity` also gets its `cancelled` event.
 - Rejects on any non-2xx, including `404` (unknown or foreign task) and `409` (task already terminal).
 
 ## ArgideAgent.onActivity(callback)
 
-Subscribes to ephemeral, per-tab activity events. Returns an unsubscribe function.
+Subscribes to the task's results and to live activity. Returns an unsubscribe function.
 
 ```ts
 const off = ArgideAgent.onActivity((activity) => {
-  // { kind: "tool-start" | "tool-end" | "idle", ... }
+  // { kind: "tool-start" | "tool-end" | "idle" | "task", ... }
 });
 // later, to unsubscribe: off()
 ```
 
-Additional event fields vary by `kind`. Activity is not persisted — for the authoritative outcome use `check()`.
+A `task` event is the task's result: `{ kind: "task", taskId, status, summary, needs }`, with `status` one of `needs_input`, `completed`, `failed`, or `cancelled`. The SDK reads it from Argide when the task finishes or waits for the user, after a page reload too. `tool-start`, `tool-end`, and `idle` are ephemeral and per-tab.
 
 ## ArgideAgent.session()
 
@@ -98,7 +100,7 @@ Tears down and resets the runtime. The next `init()` starts fresh. Normal pages 
 | Conflict | 409 | `cancel()` | The task is already terminal. |
 | Conflict | 409 | `resume()` | The task failed or was cancelled. Start a new one with `do()`. |
 
-These codes describe server-side behavior. On the client, `do()`, `check()`, `cancel()`, and `resume()` reject with a plain `Error` whose message carries the HTTP status (e.g. `agent task create failed: HTTP 409`) — the codes themselves aren't exposed as properties on the error.
+These codes describe server-side behavior. When Argide refuses a request, `do()`, `check()`, `cancel()`, and `resume()` reject with an `Error` whose `status` is the HTTP status (e.g. `409`); the message says the same (`agent task create failed: HTTP 409`). The codes themselves, such as `SESSION_BUSY`, aren't exposed on the error.
 
 ## startAgentRuntime
 
@@ -111,7 +113,7 @@ const argide = await startAgentRuntime({ apiUrl, productId, assetOrigin });
 // argide.{ sessionId, pairingCode, recovered, do, resume, check, cancel, onActivity, stop }
 ```
 
-At this level the claim-on-recovered rule and concurrent-start guarding are your responsibility: check `recovered` before claiming, and guard against starting two runtimes concurrently yourself.
+At this level the claim-on-recovered rule and concurrent-start guarding are your responsibility: check `recovered` before claiming, and guard against starting two runtimes concurrently yourself. The runtime doesn't follow the task for you either: `check()`, `cancel()`, and `resume()` need a `taskId`, and `onActivity` sends no `task` events.
 
 <Card title="Integration requirements" icon="list-check" href="/agent-sdk/overview#integration-requirements">
   What your stack must support before going live
