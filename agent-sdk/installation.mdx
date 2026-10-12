@@ -1,77 +1,73 @@
 ---
 title: "Installation"
-description: "Get access to the Agent SDK on GitHub Packages and install it"
+description: "Get your install token and install the Agent SDK from GitHub Packages"
 ---
 
-`@ourguide-ai/agent` is published to **GitHub Packages** as a restricted package. Every install is authenticated — there is no anonymous access, even to read. Complete these four steps once per project, plus once for every environment that builds your app.
+`@ourguide-ai/agent` is published to **GitHub Packages** as a private package, so every install needs the install token Argide gives you. Complete these three steps once per project, and set the token in every environment that builds your app.
 
 <Note>
-  Already have access and a token configured? Skip to the [quickstart](/agent-sdk/quickstart).
+  Already have your token configured? Skip to the [quickstart](/agent-sdk/quickstart).
 </Note>
 
-## 1. Request package access
+## 1. Get your install token
 
-Ask Argide to grant your GitHub account read access to the package. Nothing below works until that is done — an account without access gets a `404`, not a permission error.
+Email [support@argide.ai](mailto:support@argide.ai) and we send you an install token through a one-time link. You don't need a GitHub account.
 
-Contact [support@argide.ai](mailto:support@argide.ai) with the GitHub username or organization that needs access.
-
-## 2. Create a personal access token
-
-Create a **classic** personal access token with the `read:packages` scope at [github.com/settings/tokens](https://github.com/settings/tokens).
-
-<Warning>
-  GitHub Packages does not accept fine-grained tokens. It must be a classic token, or authentication fails.
-</Warning>
-
-## 3. Point the scope at GitHub Packages
+## 2. Point the scope at GitHub Packages
 
 Add an `.npmrc` to your project root:
 
 ```bash .npmrc
 @ourguide-ai:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+//npm.pkg.github.com/:_authToken=${ARGIDE_NPM_TOKEN}
 ```
 
 This routes only the `@ourguide-ai` scope to GitHub Packages. Every other dependency still comes from the public npm registry.
 
-<Note>
-  npm, pnpm, and Yarn Classic all read `.npmrc`. Yarn Berry uses `npmScopes` in `.yarnrc.yml` instead.
-</Note>
+npm, pnpm, and Yarn Classic read `.npmrc`. Yarn Berry reads `.yarnrc.yml` instead:
 
-## 4. Export the token wherever you install
+```yaml .yarnrc.yml
+npmScopes:
+  ourguide-ai:
+    npmRegistryServer: "https://npm.pkg.github.com"
+    npmAuthToken: "${ARGIDE_NPM_TOKEN}"
+```
 
-The `${GITHUB_TOKEN}` above is expanded from the environment at install time, so set it everywhere an install runs — your shell, your CI jobs, your Docker builds, and any platform that builds the app for you (Vercel, Netlify, Amplify, and similar).
+## 3. Set the token wherever you install
+
+The `${ARGIDE_NPM_TOKEN}` above is expanded from the environment at install time, so set it everywhere an install runs — your shell, your CI jobs, your Docker builds, and any platform that builds the app for you (Vercel, Netlify, Amplify, and similar).
 
 <CodeGroup>
 
 ```bash npm
-export GITHUB_TOKEN=<your token>
+export ARGIDE_NPM_TOKEN=<your token>
 npm install @ourguide-ai/agent
 ```
 
 ```bash pnpm
-export GITHUB_TOKEN=<your token>
+export ARGIDE_NPM_TOKEN=<your token>
 pnpm add @ourguide-ai/agent
 ```
 
 ```bash yarn
-export GITHUB_TOKEN=<your token>
+export ARGIDE_NPM_TOKEN=<your token>
 yarn add @ourguide-ai/agent
 ```
 
 </CodeGroup>
 
 <Warning>
-  Keep the token out of source control. Because `.npmrc` references `${GITHUB_TOKEN}` rather than the token itself, the file stays safe to commit — but if you paste a literal token in, add `.npmrc` to your `.gitignore`.
+  Keep the token out of source control. Because `.npmrc` references `${ARGIDE_NPM_TOKEN}` rather than the token itself, the file stays safe to commit — but if you paste a literal token in, add `.npmrc` to your `.gitignore`.
 </Warning>
 
 ## Troubleshooting
 
 | Symptom | Cause |
 | ------- | ----- |
-| `401 Unauthorized` | `GITHUB_TOKEN` is unset or empty in the environment running the install. |
-| `403 Forbidden` | The token exists but lacks the `read:packages` scope, or it is a fine-grained token. |
-| `404 Not Found` | Your account has not been granted access to the package (step 1). GitHub returns `404` rather than revealing that a private package exists. |
+| `401`, `authentication token not provided`, or `User cannot be authenticated with the token provided` | `ARGIDE_NPM_TOKEN` is unset, empty, or mistyped in the environment running the install, or the token was revoked. |
+| `Failed to replace env in config` or `Environment variable not found` | `ARGIDE_NPM_TOKEN` is unset (pnpm, Yarn). |
+| `404` from `registry.npmjs.org` or `registry.yarnpkg.com` | The `@ourguide-ai` scope isn't routed to GitHub Packages. pnpm ignores the whole `.npmrc` when `ARGIDE_NPM_TOKEN` is unset, and Yarn Berry reads `.yarnrc.yml`, not `.npmrc`. |
+| `403` or `404` from `npm.pkg.github.com` | The token can't read the package. Contact [support@argide.ai](mailto:support@argide.ai) for a new one. |
 | Works locally, fails in CI | The token is exported in your shell but not in the CI environment or Docker build. |
 
 ## Next steps
