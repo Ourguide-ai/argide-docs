@@ -9,9 +9,9 @@
   },
   "favicon": "/logo/favicon.png",
   "colors": {
-    "primary": "#0A0A0A",
-    "light": "#FAFAFA",
-    "dark": "#0A0A0A"
+    "primary": "#184F95",
+    "light": "#6DA7EC",
+    "dark": "#184F95"
   },
   "navigation": {
     "tabs": [
@@ -182,12 +182,18 @@
   },
   "background": {
     "color": {
-      "light": "#FFFFFF",
-      "dark": "#0A0A0A"
+      "light": "#FCFCFB",
+      "dark": "#151515"
     }
   },
   "fonts": {
-    "family": "Inter"
+    "heading": {
+      "family": "Source Serif 4",
+      "weight": 600
+    },
+    "body": {
+      "family": "Inter"
+    }
   },
   "appearance": {
     "default": "system"

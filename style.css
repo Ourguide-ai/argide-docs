@@ -1,0 +1,115 @@
+:root {
+  --ag-ink: #0b0b0b;
+  --ag-text: #52514e;
+  --ag-muted: #898781;
+  --ag-link: #184f95;
+  --ag-link-line: rgba(24, 79, 149, 0.4);
+  --ag-code: #8e2626;
+  --ag-tint: rgba(11, 11, 11, 0.05);
+  --ag-tint-strong: rgba(11, 11, 11, 0.1);
+  --ag-rule: rgba(11, 11, 11, 0.1);
+}
+
+html.dark {
+  --ag-ink: #f0efec;
+  --ag-text: #c3c2b7;
+  --ag-muted: #8f8e86;
+  --ag-link: #6da7ec;
+  --ag-link-line: rgba(109, 167, 236, 0.4);
+  --ag-code: #ec7e7e;
+  --ag-tint: rgba(255, 255, 255, 0.05);
+  --ag-tint-strong: rgba(255, 255, 255, 0.15);
+  --ag-rule: rgba(255, 255, 255, 0.1);
+}
+
+#page-title,
+.prose h2,
+.prose h3 {
+  color: var(--ag-ink);
+  letter-spacing: -0.01em;
+}
+
+.prose,
+.prose p,
+.prose li,
+.prose td {
+  color: var(--ag-text);
+}
+
+.prose strong,
+.prose th {
+  color: var(--ag-ink);
+}
+
+.prose a:not(.group\/link):not([class*="card"]) {
+  color: var(--ag-link);
+  font-weight: inherit;
+  border-bottom: 0;
+  text-decoration: underline;
+  text-decoration-color: var(--ag-link-line);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.prose a:not(.group\/link):not([class*="card"]):hover {
+  text-decoration-color: currentColor;
+}
+
+.prose :not(pre) > code {
+  color: var(--ag-code);
+  background: var(--ag-tint);
+  border: 0;
+  border-radius: 5px;
+  padding: 0.1em 0.35em;
+  font-weight: 400;
+}
+
+.prose :not(pre) > code::before,
+.prose :not(pre) > code::after {
+  content: none;
+}
+
+.prose th {
+  background: var(--ag-tint);
+}
+
+.prose th,
+.prose td {
+  border-color: var(--ag-rule);
+}
+
+#sidebar .sidebar-group-header {
+  color: var(--ag-ink);
+  font-weight: 600;
+}
+
+#sidebar li > a {
+  margin-left: 0.5rem;
+  width: calc(100% - 1rem);
+  padding-left: 0.75rem !important;
+  border-left: 0;
+  border-radius: 8px;
+  color: var(--ag-text);
+}
+
+#sidebar li > a:hover {
+  background: var(--ag-tint);
+  color: var(--ag-ink);
+}
+
+#sidebar li > a[aria-current="page"] {
+  background: var(--ag-tint-strong);
+  color: var(--ag-ink);
+  text-shadow: none;
+  font-weight: 500;
+}
+
+.eyebrow {
+  color: var(--ag-muted) !important;
+  font-weight: 500;
+}
+
+#table-of-contents h2,
+#table-of-contents-content h2 {
+  font-family: inherit;
+}
