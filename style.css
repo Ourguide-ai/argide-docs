@@ -1,4 +1,6 @@
 :root {
+  --content-width: 44.5rem;
+  --sidebar-width: 16.5rem;
   --ag-ink: #0b0b0b;
   --ag-text: #52514e;
   --ag-muted: #898781;
@@ -78,18 +80,80 @@ html.dark {
   border-color: var(--ag-rule);
 }
 
+.eyebrow {
+  color: var(--ag-muted) !important;
+  font-weight: 500;
+}
+
+#table-of-contents h2,
+#table-of-contents-content h2 {
+  font-family: inherit;
+}
+
+#page-title {
+  font-size: 26.25px;
+  line-height: 32.8px;
+}
+
+#header .prose {
+  margin-top: 12px;
+  font-size: 15px;
+  line-height: 22px;
+  color: var(--ag-text);
+}
+
+#content.mdx-content {
+  margin-top: 28px;
+  font-size: 15px;
+  line-height: 22px;
+}
+
+.mdx-content p {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.mdx-content h2 {
+  font-size: 20.625px;
+  line-height: 25.8px;
+  margin-top: 38px;
+  margin-bottom: 10px;
+}
+
+.mdx-content h3 {
+  font-size: 16.875px;
+  line-height: 22px;
+  margin-top: 30px;
+  margin-bottom: 8px;
+}
+
+.mdx-content ul,
+.mdx-content ol {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.mdx-content li {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.mdx-content th,
+.mdx-content td {
+  padding: 6.5px 11.25px;
+  font-size: 15px;
+  line-height: 22px;
+}
+
 #sidebar .sidebar-group-header {
   color: var(--ag-ink);
-  font-weight: 600;
+  font-weight: 500;
+  margin-bottom: 4px;
 }
 
 #sidebar li > a {
-  margin-left: 0.5rem;
-  width: calc(100% - 1rem);
-  padding-left: 0.75rem !important;
-  border-left: 0;
-  border-radius: 8px;
   color: var(--ag-text);
+  border-radius: 8px;
 }
 
 #sidebar li > a:hover {
@@ -101,15 +165,60 @@ html.dark {
   background: var(--ag-tint-strong);
   color: var(--ag-ink);
   text-shadow: none;
-  font-weight: 500;
 }
 
-.eyebrow {
-  color: var(--ag-muted) !important;
-  font-weight: 500;
+html.dark #navbar .bg-primary-dark {
+  background: #f0efec;
 }
 
-#table-of-contents h2,
-#table-of-contents-content h2 {
-  font-family: inherit;
+html.dark #navbar a:has(.bg-primary-dark) .text-white,
+html.dark #navbar a:has(.bg-primary-dark) svg {
+  color: #151515;
+}
+
+#navbar .nav-logo {
+  height: 2rem;
+}
+
+.mdx-content > span,
+.mdx-content > p {
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+#sidebar div:has(> .sidebar-group-header) {
+  margin-top: 16px;
+}
+
+#sidebar .sidebar-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#sidebar .sidebar-group > * {
+  margin-top: 0 !important;
+}
+
+#sidebar li > a {
+  line-height: 20px;
+}
+
+#navbar a:has(> .nav-logo),
+#navbar a:has(.nav-logo) {
+  display: flex;
+  align-items: center;
+}
+
+#navbar a:has(.nav-logo)::after {
+  content: "Docs";
+  margin-left: 0.15em;
+  font-family: Inter, sans-serif;
+  font-size: 18.5px;
+  font-weight: 400;
+  line-height: 32px;
+  letter-spacing: -0.01em;
+  color: var(--ag-ink);
+  position: relative;
+  top: 2px;
 }

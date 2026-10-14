@@ -1,96 +1,91 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "maple",
+  "theme": "mint",
   "name": "Argide",
   "logo": {
     "light": "/logo/light.png",
     "dark": "/logo/dark.png",
-    "href": "https://argide.ai"
+    "href": "https://docs.argide.ai"
   },
   "favicon": "/logo/favicon.png",
   "colors": {
     "primary": "#184F95",
     "light": "#6DA7EC",
-    "dark": "#184F95"
+    "dark": "#0B0B0B"
   },
   "navigation": {
-    "tabs": [
+    "groups": [
       {
-        "tab": "Documentation",
-        "groups": [
+        "group": "Get started",
+        "pages": [
+          "get-started/introduction",
+          "get-started/quickstart"
+        ]
+      },
+      {
+        "group": "Set up",
+        "pages": [
+          "setup/embed-widget",
+          "setup/user-identification",
+          "setup/deploy"
+        ]
+      },
+      {
+        "group": "Configure your agent",
+        "pages": [
+          "agent/identity-instructions",
+          "agent/mode-design",
+          "agent/user-suggestions",
+          "agent/page-navigation",
+          "agent/workflows",
+          "agent/in-page-actions",
+          "agent/visibility"
+        ]
+      },
+      {
+        "group": "Knowledge base",
+        "pages": [
+          "knowledge-base/knowledge-base",
+          "knowledge-base/website",
+          "knowledge-base/files"
+        ]
+      },
+      {
+        "group": "Conversations",
+        "pages": [
+          "conversations/inbox",
+          "conversations/escalation",
+          "conversations/satisfaction",
+          "conversations/email-notifications"
+        ]
+      },
+      {
+        "group": "Organization",
+        "pages": [
+          "organization/members"
+        ]
+      },
+      {
+        "group": "Agent SDK",
+        "pages": [
+          "agent-sdk/overview",
+          "agent-sdk/installation",
+          "agent-sdk/quickstart",
+          "agent-sdk/claiming-sessions",
+          "agent-sdk/running-tasks",
+          "agent-sdk/api-reference"
+        ]
+      },
+      {
+        "group": "Optional",
+        "pages": [
           {
-            "group": "Get started",
+            "group": "API integration",
             "pages": [
-              "get-started/introduction",
-              "get-started/quickstart"
-            ]
-          },
-          {
-            "group": "Set up",
-            "pages": [
-              "setup/embed-widget",
-              "setup/user-identification",
-              "setup/deploy"
-            ]
-          },
-          {
-            "group": "Configure your agent",
-            "pages": [
-              "agent/identity-instructions",
-              "agent/mode-design",
-              "agent/user-suggestions",
-              "agent/page-navigation",
-              "agent/workflows",
-              "agent/in-page-actions",
-              "agent/visibility"
-            ]
-          },
-          {
-            "group": "Knowledge base",
-            "pages": [
-              "knowledge-base/knowledge-base",
-              "knowledge-base/website",
-              "knowledge-base/files"
-            ]
-          },
-          {
-            "group": "Conversations",
-            "pages": [
-              "conversations/inbox",
-              "conversations/escalation",
-              "conversations/satisfaction",
-              "conversations/email-notifications"
-            ]
-          },
-          {
-            "group": "Organization",
-            "pages": [
-              "organization/members"
-            ]
-          },
-          {
-            "group": "Agent SDK",
-            "pages": [
-              "agent-sdk/overview",
-              "agent-sdk/installation",
-              "agent-sdk/quickstart",
-              "agent-sdk/claiming-sessions",
-              "agent-sdk/running-tasks",
-              "agent-sdk/api-reference"
-            ]
-          },
-          {
-            "group": "Optional",
-            "pages": [
-              {
-                "group": "API integration",
-                "pages": [
-                  "integration/api-integration",
-                  "integration/openapi",
-                  "integration/openapi-auth",
-                  "integration/identity-verification"
-                ]
-              }
+              "integration/api-integration",
+              "integration/openapi",
+              "integration/openapi-auth",
+              "integration/identity-verification"
             ]
           }
         ]
