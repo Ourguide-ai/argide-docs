@@ -1,0 +1,113 @@
+---
+title: "Satisfaction (CSAT)"
+description: "Ask end users to rate closed conversations and track the results"
+---
+
+Satisfaction surveys ask end users to rate a conversation once it closes. Ratings for the AI agent and for your support team are kept apart, so you can see how each one is doing.
+
+## Turn on surveys
+
+<Steps>
+  <Step title="Open the settings">
+    Open **Settings** → **Satisfaction**.
+  </Step>
+  <Step title="Turn on the rating survey">
+    Turn on the toggle under **Rating survey**. The label changes to **Rating survey is on**. Surveys are off by default.
+  </Step>
+  <Step title="Choose inactivity closes">
+    **Ask after an inactivity close** is on by default. Turn it off to survey only conversations that ended with a clear resolution or a support agent's close.
+  </Step>
+  <Step title="Write the question">
+    Edit **Question** and click **Save**. It appears above the rating faces in the widget. The default is "How was your experience?", and it can be up to 200 characters.
+  </Step>
+</Steps>
+
+Toggles save as soon as you change them. Only an organization admin can change these settings.
+
+## When end users are asked
+
+A survey goes out when a conversation closes:
+
+| How it closed | Who gets rated |
+| ------------- | -------------- |
+| The end user confirmed the AI agent's answer helped | The AI agent |
+| The conversation closed for inactivity, with **Ask after an inactivity close** on | The AI agent |
+| A teammate clicked **Close** after replying in the conversation | Your support team |
+
+A few cases send nothing:
+
+- A teammate closes a conversation without having replied in it.
+- Neither the agent nor a teammate ever replied.
+- The end user's last message is more than 7 days old.
+
+Once a teammate replies, the AI agent is no longer surveyed in that conversation. A conversation can still end up with two ratings: one for the AI agent before the handover, and one for your team afterwards.
+
+If a conversation is reopened and closes again, the end user sees the same survey again rather than a new one. This stops once they've left a comment or 14 days have passed since they were first asked.
+
+See [Inbox](/conversations/inbox#open-snoozed-and-closed) for how conversations close.
+
+## What end users see
+
+The widget shows a rating card at the end of the conversation with your question and five faces:
+
+| Face | Rating | Counts as |
+| ---- | ------ | --------- |
+| 🤩 | **Amazing** (5) | Positive |
+| 😃 | **Great** (4) | Positive |
+| 😐 | **Ok** (3) | Neutral |
+| 🙁 | **Bad** (2) | Negative |
+| 😠 | **Terrible** (1) | Negative |
+
+Picking a face submits the rating straight away. A **Tell us more…** field then lets them add a comment of up to 500 characters.
+
+The end user can change their rating until they leave a comment, or for 14 days after they were asked. After that the card reads "This conversation can no longer be rated".
+
+In the inbox, the rating shows on the conversation's row, as a marker in the **Chat** tab, and under **Rating** in the **Details** tab.
+
+## The Satisfaction report
+
+Open **Conversations** → **Satisfaction**. Pick **Last 7 days**, **Last 30 days**, or **Last 90 days**. The default is 30 days.
+
+<Note>
+  Every metric except **CSAT request rate** counts surveys by when they were **asked**, not when they were answered. A survey asked on the last day of a window and answered the next day still counts in that window.
+</Note>
+
+### Scores
+
+| Metric | Formula |
+| ------ | ------- |
+| **Overall CSAT score** | Positive answers (Great or Amazing) ÷ answered surveys |
+| **Overall DSAT score** | Neutral and negative answers (Ok, Bad, or Terrible) ÷ answered surveys. Always 100% minus the CSAT score. |
+| **AI agent CSAT score** | Positive answers ÷ answered surveys, for the AI agent's surveys |
+| **Support agent CSAT score** | Positive answers ÷ answered surveys, for your support team's surveys |
+
+Each tile also shows the counts behind it, such as "42 out of 50". A score reads **—** when no survey was answered.
+
+**CSAT score over time** charts the overall score by **Day** or **Week**. A day or week with no answers leaves a gap in the line rather than dropping to 0%.
+
+### Ratings and remarks
+
+- **Positive remarks**, **Neutral remarks**, and **Negative remarks** count the answers in each group.
+- **Conversation ratings - by rating** shows how many answers each face received.
+- **Conversation ratings** lists every answered survey, newest first: the rating, the comment, the end user's name, who handled the conversation, and when they answered. Filter by face, and click the time to open the conversation.
+
+### Survey coverage
+
+| Metric | Formula |
+| ------ | ------- |
+| **CSAT request rate** | Conversations started in the window that were asked for a rating at any point ÷ all conversations started in the window |
+| **CSAT response rate** | Answered surveys ÷ surveys sent in the window |
+| **Surveys sent** | Surveys asked in the window, split between the AI agent and your support team |
+| **Surveys answered** | Surveys sent in the window that the end user answered, split the same way |
+
+A conversation rated for both the AI agent and your team counts as two surveys.
+
+### Comparison with the previous period
+
+Each tile compares itself with the previous period of the same length, just before the current one. For example, with **Last 30 days** selected, it compares with the 30 days before that.
+
+- Scores and rates change in percentage points, such as "▲ 4 pts vs previous 30 days".
+- Counts change by the number of answers or surveys.
+- Green means the change is good and red means it's bad. Lower is better for **Overall DSAT score** and **Negative remarks**. **Neutral remarks**, **Surveys sent**, and **Surveys answered** aren't colored.
+
+A tile reads "No data in the previous 30 days" when there's nothing to compare against.

@@ -29,29 +29,53 @@
         "tab": "Documentation",
         "groups": [
           {
-            "group": "Get Started",
+            "group": "Get started",
             "pages": [
               "get-started/introduction",
               "get-started/quickstart"
             ]
           },
           {
-            "group": "Setup",
+            "group": "Set up",
             "pages": [
               "setup/embed-widget",
               "setup/user-identification",
-              "setup/flutter",
               "setup/deploy"
             ]
           },
           {
-            "group": "Agent",
+            "group": "Configure your agent",
             "pages": [
-              "agent/actions",
+              "agent/identity-instructions",
+              "agent/mode-design",
               "agent/user-suggestions",
               "agent/page-navigation",
               "agent/workflows",
+              "agent/in-page-actions",
               "agent/visibility"
+            ]
+          },
+          {
+            "group": "Knowledge base",
+            "pages": [
+              "knowledge-base/knowledge-base",
+              "knowledge-base/website",
+              "knowledge-base/files"
+            ]
+          },
+          {
+            "group": "Conversations",
+            "pages": [
+              "conversations/inbox",
+              "conversations/escalation",
+              "conversations/satisfaction",
+              "conversations/email-notifications"
+            ]
+          },
+          {
+            "group": "Organization",
+            "pages": [
+              "organization/members"
             ]
           },
           {
@@ -66,40 +90,17 @@
             ]
           },
           {
-            "group": "Knowledge Base",
+            "group": "Optional",
             "pages": [
-              "knowledge-base/knowledge-base",
-              "knowledge-base/files",
-              "knowledge-base/website"
-            ]
-          },
-          {
-            "group": "Integration",
-            "pages": [
-              "integration/integration",
-              "integration/api-integration",
-              "integration/identity-verification",
               {
-                "group": "Server-Side Tools",
+                "group": "API integration",
                 "pages": [
+                  "integration/api-integration",
                   "integration/openapi",
-                  "integration/openapi-auth"
+                  "integration/openapi-auth",
+                  "integration/identity-verification"
                 ]
-              },
-              "integration/client-side-tools",
-              "integration/tool-renderers"
-            ]
-          },
-          {
-            "group": "Monitor",
-            "pages": [
-              "monitor/activity"
-            ]
-          },
-          {
-            "group": "Organization",
-            "pages": [
-              "organization/members"
+              }
             ]
           }
         ]
@@ -110,6 +111,78 @@
     {
       "source": "/setup/identity-verification",
       "destination": "/integration/identity-verification"
+    },
+    {
+      "source": "/setup/flutter",
+      "destination": "/setup/embed-widget"
+    },
+    {
+      "source": "/setup/react-native",
+      "destination": "/setup/embed-widget"
+    },
+    {
+      "source": "/setup/customization",
+      "destination": "/agent/mode-design"
+    },
+    {
+      "source": "/setup/event-callbacks",
+      "destination": "/setup/embed-widget"
+    },
+    {
+      "source": "/setup/multi-language-support",
+      "destination": "/agent/identity-instructions"
+    },
+    {
+      "source": "/agent/actions",
+      "destination": "/agent/in-page-actions"
+    },
+    {
+      "source": "/agent/sandbox",
+      "destination": "/get-started/quickstart"
+    },
+    {
+      "source": "/monitor/activity",
+      "destination": "/conversations/inbox"
+    },
+    {
+      "source": "/knowledge-base/notion",
+      "destination": "/knowledge-base/knowledge-base"
+    },
+    {
+      "source": "/integration/integration",
+      "destination": "/integration/api-integration"
+    },
+    {
+      "source": "/integration/client-side-tools",
+      "destination": "/integration/api-integration"
+    },
+    {
+      "source": "/integration/tool-renderers",
+      "destination": "/integration/api-integration"
+    },
+    {
+      "source": "/integration/mcp-servers",
+      "destination": "/integration/api-integration"
+    },
+    {
+      "source": "/integration/external-mcp-servers",
+      "destination": "/integration/api-integration"
+    },
+    {
+      "source": "/integration/server-side-mcp-auth",
+      "destination": "/integration/openapi-auth"
+    },
+    {
+      "source": "/integration/multi-subdomain-endpoints",
+      "destination": "/integration/openapi"
+    },
+    {
+      "source": "/integration/envoy-cli",
+      "destination": "/integration/api-integration"
+    },
+    {
+      "source": "/get-started/ourguide-docs-mcp",
+      "destination": "/get-started/introduction"
     }
   ],
   "footerSocials": {

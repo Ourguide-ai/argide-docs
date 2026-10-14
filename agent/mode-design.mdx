@@ -1,0 +1,156 @@
+---
+title: "Mode and design"
+description: "Choose a floating widget or a copilot sidebar, and match the chat to your brand"
+---
+
+**Agent** → **Mode** decides the layout the embed script renders. **Agent** → **Design** controls colors, type, size, and the elements Argide draws on your page. Neither needs a code change: the script reads both each time a visitor loads your page.
+
+<Note>
+  You need the Admin role in your organization to save changes on any **Agent** page.
+</Note>
+
+## Mode
+
+| Mode | What users get | Best for |
+| ---- | -------------- | -------- |
+| **Regular** (default) | A bubble in the bottom-right corner that opens a floating chat panel over your page. | Marketing sites, public support pages, mobile-first apps |
+| **Copilot** | A sidebar docked to the left or right edge. When it opens, it pushes your page content aside instead of covering it. | In-product assistants, dashboards, power-user tools |
+
+When you pick **Copilot**, choose **Sidebar position**: **left** or **right** (default). The launcher bubble moves to the same side.
+
+Click **Save Changes**. You can also pick the mode in step 2 of **Deploy** → **Install**; both places change the same setting.
+
+### Mobile
+
+Copilot mode falls back to the regular widget on screens 768 px wide or narrower. The check runs when the page loads.
+
+### Force a mode from your code
+
+To override the dashboard for one page or one test, add `data-mode` to the script tag. It accepts `widget` or `copilot`; any other value is ignored.
+
+```html
+<script>window.argide = window.argide || [];</script>
+<script
+  src="https://dashboard.argide.ai/argide-b2b.iife.js"
+  data-product-id="YOUR_PRODUCT_ID"
+  data-api-url="https://api.argide.ai"
+  data-mode="copilot"
+></script>
+```
+
+The sidebar still opens on the side set in **Sidebar position**.
+
+## Design
+
+The **Design** page edits the chat panel, the floating bubble, and two things Argide draws directly on your page. The preview on the right updates as you edit.
+
+Click **Save Changes** to publish. **Reset to Default** fills the form with the defaults below; click **Save Changes** afterwards to apply them.
+
+### Theme
+
+The **Theme** toggle at the top switches between two built-in palettes, **Light** and **Dark**. Each sets every panel color and the bubble colors in one click. As soon as you edit any color by hand, the toggle switches to **Custom**, and you can flip back to your custom palette after trying a preset.
+
+### Open chat automatically
+
+When on, the chat opens by itself on the first page a visitor loads in a new browser tab. It doesn't reopen on later pages in that tab. Off by default.
+
+### Chat panel
+
+Each group is a collapsible section. Colors accept any hex value from the picker.
+
+<AccordionGroup>
+  <Accordion title="Colors">
+    | Setting | Default |
+    | ------- | ------- |
+    | **Background** | `#ffffff` |
+    | **Border** | `#e4e4e7` |
+    | **Text** | `#18181b` |
+    | **Messages Background** | `#ffffff` |
+
+    A dark **Background** also switches the input box, suggestion chips, and loading indicator to dark styling automatically.
+  </Accordion>
+  <Accordion title="AI Agent Messages">
+    | Setting | Default |
+    | ------- | ------- |
+    | **Bubble Color** | `#f4f4f5` |
+    | **Text Color** | `#18181b` |
+  </Accordion>
+  <Accordion title="User Messages">
+    | Setting | Default |
+    | ------- | ------- |
+    | **Bubble Color** | `#2563eb` |
+    | **Text Color** | `#ffffff` |
+    | **Border Color** | `#2563eb` |
+  </Accordion>
+  <Accordion title="Send Button">
+    | Setting | Default |
+    | ------- | ------- |
+    | **Active Background** | `#2563eb` |
+    | **Icon Color** | `#ffffff` |
+    | **Inactive Background** | `#d1d5db` |
+  </Accordion>
+  <Accordion title="Typography">
+    | Setting | Options | Default |
+    | ------- | ------- | ------- |
+    | **Font Family** | System, Inter, Roboto, Open Sans, Lato, Montserrat, Poppins | Inter |
+    | **Font Weight** | Light, Normal, Medium, Semibold, Bold | Normal |
+    | **Font Size** | px | 13.5 |
+    | **Header Size** | px | 16 |
+    | **Line Height** | multiplier | 1.5 |
+    | **Letter Spacing** | px | 0 |
+
+    Argide loads Inter for the chat itself. The other named fonts render only if your page already loads them; otherwise the browser falls back to a system sans-serif.
+  </Accordion>
+  <Accordion title="Dimensions">
+    | Setting | Default |
+    | ------- | ------- |
+    | **Width** | 400 px |
+    | **Max Height** | 600 px |
+    | **Border Radius** | 24 px |
+    | **Padding** | 20 px |
+
+    The panel never grows past the visitor's screen. In copilot mode, **Width** sets the width of the sidebar.
+  </Accordion>
+  <Accordion title="Shadow">
+    **Widget Shadow**: None, Soft, Medium, Strong, or Extra Strong. Default is Extra Strong.
+  </Accordion>
+</AccordionGroup>
+
+### Floating bubble
+
+The bubble is the launcher users click to open the chat.
+
+| Section | Setting | Default |
+| ------- | ------- | ------- |
+| **Colors** | **Background** | `#18181b` |
+| | **Border** | `#e4e4e7` |
+| | **Icon** | `#ffffff` |
+| **Size** | **Button Size** | 48 px |
+| | **Icon Size** | 24 px |
+| **Position** | **Right** | 16 px |
+| | **Bottom** | 16 px |
+
+**Right** and **Bottom** are offsets from the corner of the screen. When the copilot sidebar is on the left, **Right** is measured from the left edge instead.
+
+**Persuasion Label** shows a short tooltip above the bubble while the chat is closed. It's on by default. Set the wording in **Label Text**; if you leave it empty, the label reads "How can I help you?". When a reply arrives while the chat is closed, a preview of it replaces the label.
+
+### Highlight
+
+**Mark Color** sets the color of everything the agent draws on your page: the border and diamond marker during a [guided walkthrough](/agent/workflows), and the box and cursor that mark what the agent is about to click during [in-page actions](/agent/in-page-actions). Default is `#facc15` (yellow).
+
+The marks sit on your page, not in the chat panel, so they don't follow the panel **Theme**. Pick a color that stands out against your own UI.
+
+### Control bar
+
+While the agent or a workflow is working on your page, a floating bar with a **Stop** button appears at the bottom of the screen. Choose its **Theme**: **Light** or **Dark** (default). Like the highlight, it doesn't follow the panel theme.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Identity and instructions" icon="id-card" href="/agent/identity-instructions">
+    Name the agent and set its tone
+  </Card>
+  <Card title="Visibility" icon="eye" href="/agent/visibility">
+    Show the widget only when you want it
+  </Card>
+</CardGroup>

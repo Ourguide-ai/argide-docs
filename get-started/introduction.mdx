@@ -1,94 +1,64 @@
 ---
 title: "Introduction"
-description: "Turn your application AI-native with Argide embeddable AI agent"
+description: "An AI agent you embed in your product to answer questions and get things done for your users"
 ---
 
-Argide is an embeddable AI agent that answers questions, takes actions, and knows your product.
+Argide is an AI agent you add to your website or web app with one script tag. It lives in a chat panel on your pages, and it does more than answer questions: it can move around your app and work in it for the user, in their own browser session.
 
-## Get Started
+## What the agent can do
+
+| Capability | What it means for your users |
+| --- | --- |
+| **Answer from your knowledge base** | Replies are grounded in your help center, docs, and uploaded files. |
+| **Navigate your app** | "Where do I change my billing email?" takes the user straight to the right page. |
+| **Run workflows** | Recorded multi-step tasks run for the user, or the agent walks them through each step. |
+| **Act on the page** | The agent clicks buttons, fills forms, and selects options, after the user approves. |
+| **Call your APIs** | The agent calls endpoints from your OpenAPI spec, as the signed-in user if you choose. |
+| **Hand over to your team** | When the user asks for a person, the agent can pass the conversation to your team. |
+
+You configure all of this in the [dashboard](https://dashboard.argide.ai/dashboard). Every conversation lands in **Conversations**, where your team can read it, reply, and step in.
+
+## Ways to add Argide
+
+| | Chat widget | Copilot | Agent SDK |
+| --- | --- | --- | --- |
+| **What users see** | A chat bubble in the bottom corner that opens a panel | A full-height sidebar beside your app, on the left or right | No Argide UI. Your own assistant stays in front. |
+| **How you add it** | Script tag | Same script tag, different mode | npm package plus one server endpoint |
+| **Best for** | Marketing sites, support on public pages, mobile-first apps | In-product assistants, dashboards, power-user tools | Products that already have a chatbot and want Argide to carry out tasks |
+
+The widget and the copilot are two modes of the same script tag. You switch between them in the dashboard without touching your code. On screens 768px wide or narrower, the copilot falls back to the widget layout.
+
+The [Agent SDK](/agent-sdk/overview) is a separate, headless option: your own chatbot delegates a goal, and an Argide agent completes it in the user's tab.
+
+## Explore the docs
 
 <CardGroup cols={2}>
   <Card title="Quickstart" icon="rocket" href="/get-started/quickstart">
-    Live in 5 minutes
+    Get a live agent on your site in a few minutes
   </Card>
-  <Card title="User Identification" icon="user" href="/setup/user-identification">
-    Tell the agent who your users are
+  <Card title="Install the widget" icon="code" href="/setup/embed-widget">
+    The script tag, display modes, and the `window.argide` commands
   </Card>
-</CardGroup>
-
-## Installation
-
-Add the Argide widget to your site with a single script tag:
-
-<Tabs>
-  <Tab title="Script Tag">
-    ```html
-    <script
-      src="https://dashboard.argide.ai/argide-b2b.iife.js"
-      data-api-url="https://api.argide.ai"
-      data-product-id="YOUR_PRODUCT_ID"
-    ></script>
-    ```
-  </Tab>
-
-  <Tab title="React SDK">
-    ```bash
-    npm install @argide/react-chat
-    ```
-
-    ```tsx
-    import { ArgideWidget } from '@argide/react-chat';
-    import '@argide/react-chat/styles.css';
-
-    <ArgideWidget productId="YOUR_PRODUCT_ID" apiUrl="https://api.argide.ai" />
-    ```
-  </Tab>
-</Tabs>
-
-## Core Features
-
-| Feature                 | What it does                                                          |
-| ----------------------- | --------------------------------------------------------------------- |
-| **Knowledge Base**      | Agent learns from your docs, website                    |
-| **API Integration**     | Agent calls your API to take actions (check orders, cancel subscriptions) |
-| **User Identification** | Agent knows the user's name — no backend needed                       |
-| **Identity Verification** | Agent acts on the user's behalf against your API                    |
-
-## How it Works
-
-<Steps>
-  <Step title="Embed">
-    Add the script tag to your site.
-  </Step>
-  <Step title="Integrate">
-    Connect your API via [OpenAPI spec](/integration/openapi).
-  </Step>
-  <Step title="Deploy">
-    Monitor conversations in [Activity](/monitor/activity).
-  </Step>
-</Steps>
-
-## Guides
-
-<CardGroup cols={2}>
-  <Card title="Knowledge Base" icon="book" href="/knowledge-base/knowledge-base">
-    Files, websites
+  <Card title="Configure your agent" icon="sliders" href="/agent/identity-instructions">
+    Name, instructions, design, suggestions, navigation, and workflows
   </Card>
-  <Card title="API Integration" icon="plug" href="/integration/api-integration">
-    Connect your REST API
+  <Card title="Knowledge base" icon="book" href="/knowledge-base/knowledge-base">
+    Teach the agent from your help center, docs, and files
   </Card>
-  <Card title="Actions" icon="bolt" href="/agent/actions">
-    Enable agent capabilities
+  <Card title="Conversations" icon="comments" href="/conversations/inbox">
+    Review conversations, reply to users, and take over from the agent
   </Card>
-  <Card title="OpenAPI Auth" icon="key" href="/integration/openapi-auth">
-    API Key, Bearer, JWT Forward
+  <Card title="Go live" icon="flag-checkered" href="/setup/deploy">
+    The checklist before you launch to real users
+  </Card>
+  <Card title="Agent SDK" icon="robot" href="/agent-sdk/overview">
+    Let Argide carry out tasks behind your own chatbot
+  </Card>
+  <Card title="API integration" icon="plug" href="/integration/api-integration">
+    Let the agent call your API from an OpenAPI spec
   </Card>
 </CardGroup>
 
-## Need Help?
+## Need help?
 
-Running into issues or want our engineers to customize Argide for your use case?
-
-<Card title="Book a Demo" icon="calendar" href="https://cal.com/eshaangulati/30min">
-  Talk to our team and get a personalized walkthrough.
-</Card>
+Email [support@argide.ai](mailto:support@argide.ai).

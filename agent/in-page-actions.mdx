@@ -1,0 +1,87 @@
+---
+title: "In-page actions"
+description: "Let the agent click, type and read the page for your users"
+---
+
+With in-page actions, the agent can do things on the page for a user instead of explaining how. A user asks "turn on two-factor authentication" and the agent clicks through the settings while they watch. Screen context lets the agent read the page the user is on, so it can answer questions about what they see.
+
+Both run in the user's own browser tab, signed in as that user. They work through the page itself, so they work with React, Vue, Angular or plain HTML, and need no code from your team.
+
+Both settings live under **Tools**, and both are on by default for new products. You need the [Admin role](/organization/members) to change them.
+
+## What the agent can do
+
+With in-page actions on, the agent can:
+
+- Click buttons, links and other controls.
+- Type into fields and fill in forms.
+- Choose options in dropdowns.
+- Check and uncheck boxes and switches.
+- Scroll the page or a scrollable panel.
+- Press keys such as Enter or Tab.
+- Drag and drop.
+- Go back to the previous page.
+
+Before it acts, the agent reads the page to find the controls it needs. The values of password fields are never sent to it; it only sees that a password field is filled in.
+
+The agent can also point instead of act. If a user asks to be shown where something is, the agent highlights the control and waits for the user to click it. And when a field needs a value the user hasn't given, the agent can show a list of valid options in the chat for the user to pick from or skip.
+
+Each step appears as a status line in the chat, such as the action's description or **Action denied**.
+
+## Turn in-page actions on or off
+
+<Steps>
+  <Step title="Open the settings">
+    Go to **Tools** → **In-Page Actions**.
+  </Step>
+  <Step title="Set the switch">
+    Under **Enable In-Page Actions**, turn **In-Page Actions** on or off.
+  </Step>
+  <Step title="Save">
+    Click **Save Changes**.
+  </Step>
+</Steps>
+
+When in-page actions are off, the agent can still answer questions and [navigate users](/agent/page-navigation) to your saved routes, but it can't click or type on the page. Automated [workflows](/agent/workflows) need in-page actions on.
+
+## Approval before actions
+
+**Require approval before actions** appears once in-page actions are on. It's on by default.
+
+When it's on, the agent asks before its first action in each reply. The chat shows an **Action requested** card, "The assistant wants to take actions on this page.", and the control the agent wants to use is highlighted on the page. The user clicks **Allow** or **Deny**.
+
+- **Allow** lets the agent act. The rest of its actions in that reply run without asking again, even if the page reloads partway through. The next message the user sends starts a new reply, which asks again.
+- **Deny** stops that action. The chat shows **Action denied** and the agent is told the user declined.
+
+Some things never ask for approval:
+
+- Reading the page, including [screen context](#screen-context).
+- Moving the user to one of your saved routes with [page navigation](/agent/page-navigation).
+- The steps of a [workflow](/agent/workflows) that's running. Starting the workflow is the user's go-ahead.
+
+When **Require approval before actions** is off, the agent acts without the card. The control it's about to use still flashes on the page first.
+
+## While the agent is acting
+
+A bar with **Assistant is working** and a **Stop** button stays on the screen while the agent acts. Clicking **Stop** ends the agent's reply, and it takes no further actions.
+
+A box and cursor mark the control the agent is about to use. Set their color with **Mark Color**, and the bar's theme under **Control bar**, in [Mode and design](/agent/mode-design).
+
+## Screen context
+
+Screen context lets the agent look at the page the user is on when they ask about it, for example "what does this error mean?" or "which button saves this?".
+
+Turn it on or off in **Tools** → **Screen Context**: set **What's On Screen** under **Enable Screen Context**, then click **Save Changes**.
+
+The agent takes a snapshot only when a question is about the screen, and the chat shows **Looking at your screen...** while it does. The snapshot is text, not an image, and contains:
+
+- The page URL and title.
+- Up to 10 headings.
+- Up to 30 buttons, links and fields, by their labels.
+- About 500 characters of the page's main visible text.
+
+It leaves out hidden elements, anything typed into fields, the page's navigation, header and footer text, and the chat widget itself.
+
+<Note>
+  Screen context only covers answering questions about the page. When in-page actions are on, the agent still reads the page to find the controls it acts on, even with screen context off.
+</Note>

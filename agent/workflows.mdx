@@ -1,36 +1,100 @@
 ---
 title: "Workflows"
-description: "Record a task the agent can run again"
+description: "Record a task once so the agent can do it, or walk users through it, on request"
 ---
 
-A workflow is a task you record once so the agent can run it again for your users. Open **Tools**, then **Workflows**. Only an organization admin can record, edit, or delete a workflow.
+A workflow is a task you record once in your own app, such as inviting a teammate or exporting a report. Afterwards the agent can run it for your users, or guide them through it one click at a time.
+
+Manage workflows in **Tools** → **Workflows**. You need the [Admin role](/organization/members) to record, edit, enable, or delete them.
+
+<Note>
+  Automated workflows act on the page, so they need [in-page actions](/agent/in-page-actions) turned on. In-page actions are on by default for new products.
+</Note>
 
 ## Record a workflow
 
+You record in a live browser inside the dashboard, narrating as you go. Recording needs microphone access.
+
 <Steps>
-  <Step title="Start from a URL">
-    Enter the page where the task begins and click **Create New Workflow**.
+  <Step title="Open the recording browser">
+    Under **Record a new workflow**, enter the URL where the task begins, such as `https://app.example.com/settings`. Click **Create New Workflow**. A browser opens on that page. Read the short guide and click **Got it**.
   </Step>
-  <Step title="Walk through the task">
-    Use the browser and narrate each step out loud.
+  <Step title="Log in">
+    If the page needs a login, sign in inside the browser. Wait until the button stops showing **Loading browser...**.
   </Step>
-  <Step title="Stop recording">
-    Click **Stop Recording**. The recording becomes a workflow you can review.
+  <Step title="Start recording">
+    Click **I'm logged in - Start Recording** and allow microphone access when your browser asks. If no sound comes through in the first few seconds, you're asked to **Select a microphone**.
   </Step>
-  <Step title="Turn it on">
-    When the workflow is ready, enable it. You can edit or delete it from the list.
+  <Step title="Do the task and narrate it">
+    Click and type through the task as a user would. Say out loud what each step does and why. Your words appear at the top of the screen and are attached to the step you're on.
+  </Step>
+  <Step title="Stop">
+    Click **Stop Recording**. You return to the workflow list, where the new workflow shows **Generating** until it's ready.
   </Step>
 </Steps>
 
-## How the agent runs it
+To throw a recording away, click **Cancel recording**.
 
-| Mode | What happens |
-| ---- | ------------ |
-| **Automated** | The agent carries out each step. Turn on **In-Page Actions** under **Tools** before you use this mode. |
-| **Guided** | The agent points at each control and the user clicks it. |
+<Tip>
+  Narrate what changes from user to user, such as "type the teammate's email here". Argide uses that to work out which values the workflow needs to ask for.
+</Tip>
 
-The agent collects inputs before the workflow starts. For an automated workflow, turn on **Collect input per-step** to ask for each input when that step needs it.
+## Review and edit a workflow
+
+Click a workflow in the list to expand it. You see its steps, the inputs it needs from the user, and its settings.
+
+To change the steps, click the pencil icon. The editor shows the workflow as a flow of steps:
+
+- Click a step to change its description, or its URL for a navigate step. A navigate step can pick from your [page navigation](/agent/page-navigation) routes.
+- Click **+** between steps to add a **Step** (a single action) or a **Navigate** step (open a URL).
+- Edit the workflow's title and description.
+- Click **Save Workflow** when you're done.
+
+To delete a workflow, click the trash icon in the list, or **Delete** in the editor. Deleting can't be undone.
+
+If recording fails to produce a workflow, it shows **Failed**. Delete it and record again.
+
+## Workflow settings
+
+| Setting | Default | What it does |
+| ------- | ------- | ------------ |
+| On/off switch | On | When off, the agent won't run the workflow and its chip is hidden. |
+| **Mode** | **Automated** | Choose **Automated** or **Guided**. See below. |
+| **Collect input per-step** | Off | Off: the agent asks for every input before the workflow starts. On: it asks for each input just before the step that needs it. Automated workflows only. |
+| **Show as suggestion** | On | Shows the workflow as a chip in the chat. When off, the chip is hidden but the agent can still run the workflow when a user asks. |
+
+Expand a workflow to change **Mode**, **Collect input per-step** and **Show as suggestion**. Changes save as soon as you make them.
+
+### Automated vs Guided
+
+| | **Automated** | **Guided** |
+| --- | --- | --- |
+| Who clicks | The agent carries out each step itself. | The agent points at each control and the user clicks it. |
+| Inputs | The agent collects the values it needs and types them in. | The agent collects nothing. The user types every value themselves. |
+| Good for | Repetitive tasks users want done for them. | Teaching users a task, or steps users should do themselves. |
+
+A **Guided** badge appears on guided workflows in the list.
 
 ## What your users see
 
-The agent asks before it starts. An automated workflow shows **Run workflow**. A guided workflow shows **Start walkthrough**.
+A user can start a workflow in two ways:
+
+- **Click its chip.** Enabled workflows appear as chips after your [suggestions](/agent/user-suggestions), labeled with the workflow's title. The same **Show suggestions only to logged-in users** rule applies to them.
+- **Ask in chat.** The agent knows every enabled workflow, including ones hidden from the chips, and can start the one that fits the request.
+
+Clicking a chip asks the user to confirm first:
+
+| Mode | Card | Buttons |
+| ---- | ---- | ------- |
+| Automated | **Workflow**, with the workflow's description | **Cancel** and **Run workflow** |
+| Guided | **Walkthrough**, explaining that the agent will point and the user clicks | **Not now** and **Start walkthrough** |
+
+### While an automated workflow runs
+
+The agent collects any inputs in the chat, then works through the steps on the page. Its steps don't show the Allow/Deny approval card that other [in-page actions](/agent/in-page-actions) can.
+
+A bar with the workflow's title and a **Stop** button stays on screen while it runs. **Stop** pauses the workflow, and the chat shows **Workflow paused** with **Resume** and **Discard**.
+
+### During a guided walkthrough
+
+The chat steps aside and the agent highlights one control at a time. It waits for the user to click it before moving to the next step. The color of the highlight is set by **Mark Color** in [Mode and design](/agent/mode-design).

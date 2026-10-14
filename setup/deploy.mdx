@@ -1,84 +1,85 @@
 ---
-title: "Deploy"
-description: "Go live with your agent"
+title: "Go live"
+description: "The checklist to work through before your agent meets real users, and how to watch it afterwards"
 ---
 
-## Get Your Embed Code
+Work through this checklist before you put the agent in front of real users. Most of it is dashboard configuration. Saving agent and tool settings requires an organization admin.
 
-In the [dashboard](https://dashboard.argide.ai/dashboard), open **Deploy → Install** and copy your embed code:
+## Before you launch
 
-```html
-<script
-  src="https://dashboard.argide.ai/argide-b2b.iife.js"
-  data-api-url="https://api.argide.ai"
-  data-product-id="YOUR_PRODUCT_ID"
-></script>
-```
+### Installation
 
-## Get your verification secret
-
-In the [dashboard](https://dashboard.argide.ai/dashboard), open **Deploy → Backend Integration** and copy **ARGIDE_AUTH_SECRET**. Use it to sign JWTs for [Identity Verification](/integration/identity-verification).
-
-<Warning>
-  Keep your verification secret safe. Never expose it in client-side code.
-</Warning>
-
----
-
-## Pre-launch Checklist
+- **Website is set.** In **Settings** → **Products**, the product's **Website** is your production domain. The widget only loads on that domain and its subdomains. See [Install the widget](/setup/embed-widget#before-you-start).
+- **The snippet is on every page that needs it.** Your production domain is listed under **Verify installation** on **Deploy** → **Install**.
+- **The mode is right.** **Regular** for a floating chat bubble, or **Copilot** for a sidebar, chosen in **Deploy** → **Install** or **Agent** → **Mode**. Remove any `data-mode` attribute you used for testing.
 
 ### Agent
 
-- [ ] Name and instructions configured
-- [ ] Tested in Sandbox
+- **Identity and instructions.** **Agent Name** and **Welcome Message** are set in **Agent** → **Identity**, and the **System Prompt** in **Agent** → **Instructions** describes your product and tone. See [Identity and instructions](/agent/identity-instructions).
+- **Design.** The widget matches your brand. See [Mode and design](/agent/mode-design).
+- **Suggestions.** The starter chips cover your most common questions. See [User suggestions](/agent/user-suggestions).
+- **Escalation.** You've decided what happens when a user asks for a person. See [Escalation](/conversations/escalation).
 
-### Knowledge Base
+### Knowledge
 
-- [ ] Docs uploaded / website crawled
-- [ ] Agent answers common questions correctly
+- **Sources are in.** Your help center, docs, and key files are in **Knowledge Base**, and file uploads show **Completed**. See [Knowledge base](/knowledge-base/knowledge-base).
+- **Answers are right.** You've asked the agent the questions your users ask most, and it answers them correctly.
 
-### Integrations (if applicable)
+### Tools
 
-- [ ] OpenAPI spec uploaded
-- [ ] Auth configured
-- [ ] Tools enabled in Actions
+- **Routes are reviewed.** In **Tools** → **Page Navigation**, you've reviewed discovered routes and clicked **Save routes**. Discovered routes don't go live until you do. See [Page navigation](/agent/page-navigation).
+- **Workflows are tested.** Every workflow in **Tools** → **Workflows** runs end to end on your production site. See [Workflows](/agent/workflows).
+- **In-page actions are set the way you want.** In **Tools** → **In-Page Actions**, decide whether to keep **Require approval before actions** on. See [In-page actions](/agent/in-page-actions).
+- **APIs are connected, if you use them.** Your OpenAPI spec is uploaded in **Tools** → **Server Side**, auth is configured, and only the endpoints you want are enabled. See [API integration](/integration/api-integration).
 
-### Identity (if applicable)
+### Users
 
-- [ ] User attributes passed via `data-*` or `update`
-- [ ] JWT endpoint implemented, if the agent calls your API on the user's behalf
-- [ ] `identify()` called in frontend
-- [ ] `resetAndClearSession()` called on logout
+- **Users are identified.** Signed-in users' attributes reach Argide through the script tag or `update`. See [User identification](/setup/user-identification).
+- **Logout clears the identity.** Your logout code calls `window.argide('resetAndClearSession')`.
+- **Signed-in API calls work, if you use them.** Your backend signs JWTs with the **ARGIDE_AUTH_SECRET** from **Deploy** → **Backend Integration**, and your frontend calls `identify` on login and page load. Refresh the token before it expires. The snippet on that page calls `identify` every 50 minutes. See [Identity verification](/integration/identity-verification).
 
----
+<Warning>
+  Keep **ARGIDE_AUTH_SECRET** on your server. Anyone who has it can sign tokens that impersonate your users.
+</Warning>
 
-## Test in Production
+### Team
+
+- **Teammates are invited.** Everyone who answers conversations is a member. See [Members](/organization/members).
+- **Follow-up is set up.** Turn on the rating survey in **Settings** → **Satisfaction**, and email notifications for unseen replies in **Settings** → **Email**. See [Satisfaction](/conversations/satisfaction) and [Email notifications](/conversations/email-notifications).
+
+## Test in production
 
 <Steps>
-  <Step title="Visit your site">
-    The widget should appear in the bottom-right corner.
+  <Step title="Open your site">
+    Load a page on your production domain. The chat bubble appears in the bottom corner, or the copilot sidebar opens beside the page.
   </Step>
-  <Step title="Test as anonymous user">
-    Ask general questions and verify the agent responds correctly.
+  <Step title="Test as a signed-out visitor">
+    Ask a few general questions. Check that the answers come from your knowledge base.
   </Step>
-  <Step title="Test as authenticated user">
-    If using identity verification, log in and verify personalized responses.
+  <Step title="Test as a signed-in user">
+    Sign in and start a conversation. In **Conversations**, check that it shows your name instead of **Anonymous visitor**.
   </Step>
-  <Step title="Try common questions">
-    Test the questions your users are most likely to ask.
+  <Step title="Try navigation and workflows">
+    Ask the agent to take you to a page, and to do a task you've built a workflow for.
   </Step>
-  <Step title="Verify tool actions work">
-    If using API integrations, trigger tool actions and confirm they execute correctly.
+  <Step title="Try your API tools">
+    If you connected an API, ask for something that needs it, such as an order status. Confirm the result matches your system.
+  </Step>
+  <Step title="Ask for a person">
+    Check that the conversation reaches your team the way you configured escalation.
+  </Step>
+  <Step title="Sign out">
+    Log out and open the widget again. The previous conversation is gone, and new chats are anonymous.
   </Step>
 </Steps>
 
----
+## Watch it after launch
 
-## Monitor
+Every conversation lands in **Conversations**:
 
-Use the [Activity](/monitor/activity) dashboard to track conversations and spot issues. You can:
+- **All conversations**, **Resolved**, **Escalated & Handoff**, and **Pending** split conversations by outcome.
+- Open any conversation to read it, reply to the user, or leave an internal note for your team.
+- Filter by sentiment, or show only friction conversations, to find answers that need work.
+- **Satisfaction** reports ratings, response rate, and comments once the survey is on.
 
-- View live and past conversations
-- See which tools are being called
-- Identify common questions that need better answers
-- Monitor error rates and response quality
+See [Conversations](/conversations/inbox) for the full tour. When the agent gets something wrong, fix the source: add knowledge, adjust the instructions, or refine the workflow.

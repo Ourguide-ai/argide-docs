@@ -1,129 +1,152 @@
 ---
-title: "Page Navigation"
-description: "Let your AI agent navigate users between pages"
+title: "Page navigation"
+description: "Give the agent a map of your app so it can take users to the right page"
 ---
 
-Page Navigation enables your AI agent to navigate users to different pages in your application. Define your routes on the dashboard or let Argide auto-generate them from your website crawl — no code required.
+Page navigation lets the agent move a user to another page in your app. When someone asks "where do I change my billing details?", the agent can open the billing page instead of describing how to get there.
 
-## Auto-Generated Routes from Website Crawl
+The agent only navigates to routes you've saved. Each route is a path plus a description of what the page is for, and the agent picks a route by matching the user's request against those descriptions. Manage them in **Tools** → **Page Navigation**. You need the [Admin role](/organization/members) to save routes.
 
-When you crawl your website via [Knowledge Base → Website](/knowledge-base/website), Argide automatically generates page navigation routes from the crawled pages. Here's what happens:
+## Add routes
 
-1. Every crawled page URL is extracted and deduplicated
-2. An AI analyzes each page's content, title, and path to generate a human-readable **name** and **description**
-3. The routes are saved to your product and immediately available to the agent
+There are three ways to fill in your routes. You can mix them.
 
-This means **if you've already added your website to the Knowledge Base, your routes are likely already set up** — no manual configuration needed.
+### From a website crawl
 
-<Info>
-  Auto-generated routes replace any existing routes for the product each time you re-crawl. If you need to keep manually added routes, add them after the crawl completes.
-</Info>
+The fastest start is to crawl your app. In **Knowledge Base**, run a crawl in the **Website** section (see [Website & help center](/knowledge-base/website)). Argide finds your pages from your site map, your app's code and the pages it crawls, and can open your app in a browser to look further.
 
----
+Discovered routes don't go live on their own. They wait in a **Review discovered routes** panel, which appears both under the crawl form and at the top of **Tools** → **Page Navigation**.
 
-## Manual Setup (Dashboard)
+<Steps>
+  <Step title="Review the changes">
+    Each route is tagged so you can see what this crawl changed:
 
-1. In the [dashboard](https://dashboard.argide.ai/dashboard), open **Tools → Page Navigation**
-2. Enable the Page Navigation toggle
-3. Add your application's routes (or review the auto-generated ones from your website crawl)
-4. Click **Save**
+    | Tag | Meaning |
+    | --- | ------- |
+    | **New** | Found for the first time. |
+    | **Changed** | Already live, with a new name or description. The old description is shown struck through. |
+    | **Unchanged** | Already live and the same. Hidden by default; click **Show N unchanged** to see them. |
+    | **Not seen this time** | Live, but this crawl didn't find it. |
+    | **Yours** | A route you added by hand. It's always kept. |
 
-## Defining Routes
+    The **Found by** column shows where a route came from, such as **site map**, **app code**, **crawled page** or **browser**. Hover it to see how confident the crawl is in that route.
+  </Step>
+  <Step title="Edit or skip routes">
+    Edit the **Name** or **Description** of any new or changed route. Click the trash icon to leave a route out of this save, and the restore icon to bring it back.
+  </Step>
+  <Step title="Decide what to remove">
+    Routes marked **Not seen this time** stay live unless you tick **Remove** on them. A crawl can miss pages it couldn't reach, so nothing is removed for you.
+  </Step>
+  <Step title="Save">
+    Click **Save routes**. The routes go live for the agent right away.
+  </Step>
+</Steps>
 
-Each route has:
+Re-crawl whenever your app changes. Each crawl produces a new review, and your hand-added routes are never touched.
 
-| Field          | Required      | Description                                             |
-| -------------- | ------------- | ------------------------------------------------------- |
-| **Name**       | Yes           | A unique identifier (e.g. `user_profile`, `dashboard`)  |
-| **Path**       | Yes           | The URL path pattern (e.g. `/users/:userId`)            |
-| **Description**| No            | What this page shows — helps the AI decide when to navigate |
-| **Parameters** | Auto-detected | Descriptions for dynamic URL segments                   |
+#### Routes with a workspace in the URL
 
-### Static Routes
+If your app puts a customer's workspace or account name in the URL, such as `/acme/settings/billing`, the crawl replaces that part with `:workspaceSlug`, giving `/:workspaceSlug/settings/billing`. That way one route works for every customer, not just the account you crawled with. The review panel shows the original URL from your crawl under each templated path.
 
-For pages with fixed URLs, just provide the name, path, and description:
+When a user asks to go somewhere, the agent fills in `:workspaceSlug` from the URL that user is on right now. If they aren't inside a workspace, for example on your login page, the route can't be filled in and the agent doesn't navigate.
 
-| Name        | Path                | Description      |
-| ----------- | ------------------- | ---------------- |
-| `dashboard` | `/dashboard`        | Main dashboard   |
-| `settings`  | `/settings/general` | App settings     |
+### Paste a list with Quick add
 
-### Dynamic Routes
+If your routes are defined in code, let a coding agent list them for you.
 
-Use `:paramName` syntax for URL segments that change. The AI fills in parameter values from conversation context.
+<Steps>
+  <Step title="Copy the prompt">
+    Under **Quick add**, copy the **Prompt for your AI coder**.
+  </Step>
+  <Step title="Run it against your codebase">
+    Paste it into Cursor, Claude Code, or any coding agent that can read your repository. It returns a JSON array of routes.
+  </Step>
+  <Step title="Import">
+    Paste the output into the **Quick add** box and click **Import**.
+  </Step>
+  <Step title="Save">
+    Check the rows in the table, then click **Save routes**.
+  </Step>
+</Steps>
 
-| Name            | Path                                | Parameters                    |
-| --------------- | ----------------------------------- | ----------------------------- |
-| `user_profile`  | `/users/:userId`                    | `userId` — The user's unique ID |
-| `order_detail`  | `/orders/:orderId`                  | `orderId` — The order number  |
-| `project_task`  | `/projects/:projectId/tasks/:taskId`| `projectId`, `taskId`         |
-
-### How the AI Gets Dynamic Parameters
-
-The AI resolves parameter values from context — you don't need to hardcode IDs:
-
-- **From conversation** — "Go to John's profile" after the user mentioned John earlier
-- **From API results** — A previous tool call returned a list of users with their IDs
-- **From user input** — "Navigate to order #ORD-4521"
-- **From screen context** — If Screen Context is enabled, the AI can read IDs from the current page
-
----
-
-## How Navigation Works
-
-By default, when the AI calls `navigateToPage`, the SDK resolves the route name to a URL path and navigates using `window.location.href`. This works universally with any framework but triggers a full page load.
-
-For single-page applications (React, Next.js, Vue, etc.), you can pass a `navigate` prop to use your framework's router instead — giving you instant SPA navigation with no page reloads.
-
-## SPA Navigation
-
-Pass your framework's router function via the `navigate` prop. The SDK handles route resolution — your function just receives the final path.
+**Import** accepts JSON or CSV:
 
 <CodeGroup>
 
-```jsx React Router
-import { useNavigate } from 'react-router-dom';
-import { ArgideWidget } from '@argide/react-chat';
-
-function App() {
-  const navigate = useNavigate();
-  return (
-    <ArgideWidget
-      productId="your-product-id"
-      navigate={(path) => navigate(path)}
-    />
-  );
-}
+```json JSON
+[
+  { "name": "Dashboard", "path": "/dashboard", "description": "Overview of account activity and key metrics." },
+  { "name": "Billing", "path": "/settings/billing", "description": "Manage payment methods and view invoices." }
+]
 ```
 
-```jsx Next.js
-import { useRouter } from 'next/navigation';
-import { ArgideWidget } from '@argide/react-chat';
-
-function App() {
-  const router = useRouter();
-  return (
-    <ArgideWidget
-      productId="your-product-id"
-      navigate={(path) => router.push(path)}
-    />
-  );
-}
+```text CSV
+name, path, description
+Dashboard, /dashboard, Overview of account activity and key metrics.
+Billing, /settings/billing, Manage payment methods and view invoices.
 ```
-
-
 
 </CodeGroup>
 
-<Info>
-  The `navigate` prop only controls how navigation executes. Your route definitions on the dashboard still power the AI's awareness of what pages exist and how to resolve dynamic parameters.
-</Info>
+JSON can also be an object with a `routes` array. In CSV, the header line is optional and you can drop the name column (`path, description`). If a description contains commas, keep the name column so the line is read correctly.
 
----
+<Warning>
+  **Import** replaces every row in the table with the imported routes, and **Save routes** saves exactly what's in the table. Any live route that isn't in your import is removed when you save. To add to existing routes, include them in the import or add the new ones by hand.
+</Warning>
 
-## Best Practices
+### Add routes by hand
 
-- **Write clear descriptions** — "User profile page showing account details and activity" is better than "Profile"
-- **Describe parameters** — Help the AI understand what values are expected (e.g. "The user's UUID from the users API")
-- **Start with key pages** — Add your most-navigated pages first, expand later
-- **Test in Sandbox** — Try asking the agent to navigate and verify it works before deploying
+Under **Or add routes manually**, click **Add route**, fill in the row, and click **Save routes**. Click the trash icon on a row to delete it. Saving replaces your whole route list with the rows in the table.
+
+## Route fields
+
+| Field | Required | What it's for |
+| ----- | -------- | ------------- |
+| **Name** | No | A short label, such as `Billing`. |
+| **Path** | Yes | The URL path. It must start with `/`, for example `/settings/billing`. |
+| **Description** | Yes | What the user can do on the page. The agent matches requests against this, so it matters most. |
+
+A path can contain dynamic segments, written `:name` or `[name]`, for example `/orders/:orderId`. The agent fills them in from what the user asked for, such as an order number they mentioned. If it can't fill every segment, it doesn't navigate.
+
+Write descriptions the way a user would ask. "Manage payment methods, download invoices, and change your plan" works better than "Billing".
+
+## How the agent navigates
+
+When a user wants to go somewhere, the agent describes the destination in plain words, such as "billing settings", and Argide matches that against your route descriptions. If a route is a good enough match, the widget moves the user there. If none is, the agent doesn't navigate.
+
+The chat shows the progress: **Finding the right page...**, then **Navigated to** the path, **No matching page found**, or **Invalid route** when a dynamic segment couldn't be filled in.
+
+Navigating to a saved route never asks the user for approval. When [in-page actions](/agent/in-page-actions) are on, the agent uses page navigation only when the user wants to go somewhere, and uses in-page actions for requests like "submit the form".
+
+## Use your app's router
+
+To move the user, the widget tries these in order and stops at the first one that works:
+
+1. The function you registered with `setNavigate`, if any.
+2. Clicking a link on the current page that points to the same path.
+3. A Next.js or Nuxt router it detects on the page.
+4. Updating the URL with the browser's History API and firing a `popstate` event.
+5. A full page load.
+
+Most single-page apps work without any code. Register your own function with `setNavigate` when your router doesn't react to step 4, or when you want navigation to go through your own logic. The function receives the path to open:
+
+```js
+function registerArgideNavigate() {
+  if (typeof window.argide === "function") {
+    window.argide("setNavigate", (path) => router.push(path));
+  } else {
+    setTimeout(registerArgideNavigate, 200);
+  }
+}
+registerArgideNavigate();
+```
+
+Replace `router.push` with your router's own navigation call.
+
+`setNavigate` only works once the widget has loaded. Unlike other commands, it can't be queued with `window.argide.push(...)` before then, which is why the example waits for `window.argide` to become a function.
+
+<Note>
+  `setNavigate` applies in widget mode only. In copilot mode it has no effect, and the agent always uses the fallback order above.
+</Note>
+
+Your function only controls how the move happens. Which page the agent picks still comes from the routes you saved.

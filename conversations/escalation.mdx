@@ -1,0 +1,84 @@
+---
+title: "Escalation & handover"
+description: "Decide what the agent does when an end user needs a person, and pick it up in the inbox"
+---
+
+Sometimes your agent can't help, or the end user simply wants a person. Escalation decides what the agent does next: hand the conversation to your team, or close it with a message that points elsewhere.
+
+Configure it in **Agent** → **Escalation**. Only an organization admin can save changes.
+
+## When the agent escalates
+
+The agent escalates when:
+
+- The end user asks to speak to a human, agent, or person. It escalates right away.
+- The end user is clearly frustrated after the agent has tried at least once to help.
+- The end user has restated the same unresolved issue three or more times.
+
+It won't escalate for mild dissatisfaction it can still address, clarifying questions, or normal conversation.
+
+Escalation applies to conversations in the chat widget and copilot.
+
+## Choose what happens
+
+Under **When asked for human support, the agent should**, pick one option and click **Save**.
+
+<Tabs>
+  <Tab title="Hand over to your team">
+    **Hand over to a team in the Inbox** is the default.
+
+    The agent tells the end user that a human agent will be with them shortly. The conversation moves to **Conversations** → **Escalated & Handoff**, where your team picks it up.
+
+    Under **Assign a conversation to**, choose the team the conversation is for: **Unassigned**, **Support Team**, **Engineering Team**, **Sales Team**, or **Billing Team**. The team appears in the escalation email.
+  </Tab>
+  <Tab title="Close with a message">
+    **Close the conversation and offer other ways to get help** has the agent end with a closing message you write, such as a link to your help center or a support email address.
+
+    Write the message under **Agent's closing message**. The agent still records the escalation, so the conversation still appears under **Escalated & Handoff**.
+
+    <Note>
+      The agent sends the first message you write, as text. Images and GIFs added in the editor aren't saved.
+    </Note>
+  </Tab>
+</Tabs>
+
+## Collect information before handover
+
+Turn on **Collect information before handover** to have the agent try once more before it escalates. It's off by default and applies when you hand over to your team.
+
+With it on, the agent:
+
+1. Asks the end user for more details about their issue.
+2. Tries to resolve it with what they share.
+3. Escalates only if it still can't help, or if the end user asks for a person a second time.
+
+To shape how the agent answers specific questions before it gets that far, add guidance in **Agent** → **Instructions**. See [Identity & instructions](/agent/identity-instructions).
+
+## What your team gets
+
+When the agent escalates a conversation:
+
+- **It appears under Escalated & Handoff** in the [inbox](/conversations/inbox).
+- **Argide sends an escalation email** with the reason, the transcript, the assigned team, and a link to the conversation. It goes to the person who created the product, or to every organization admin if that person is no longer a member. Each conversation triggers one email, and each product sends at most 20 escalation emails an hour. Escalations past that limit still show up in the inbox.
+
+## Take over the conversation
+
+The agent keeps answering until someone on your team replies. That way the end user isn't left waiting in silence.
+
+To take over, open the conversation, choose **Reply** in the composer, and send your message.
+
+<Steps>
+  <Step title="Your reply reaches the end user">
+    The widget shows **Support Agent joined the conversation**, and your messages are labeled **Support Agent**.
+  </Step>
+  <Step title="The AI agent stops answering">
+    From your first reply on, the conversation belongs to your team. The AI agent no longer answers in it, even if the end user writes again.
+  </Step>
+  <Step title="Follow up if they've left">
+    If the end user doesn't see your reply within a few minutes, Argide can email it to them. See [Email notifications](/conversations/email-notifications).
+  </Step>
+</Steps>
+
+Use a **Note** instead to leave context for teammates without the end user seeing it. A note doesn't take the conversation over.
+
+When you're done, click **Close**. If [satisfaction surveys](/conversations/satisfaction) are on, the end user is asked to rate your team.
