@@ -1,27 +1,17 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
+  "theme": "maple",
   "name": "Argide",
   "logo": {
     "light": "/logo/light.png",
     "dark": "/logo/dark.png",
-    "href": "https://argide.mintlify.app"
+    "href": "https://argide.ai"
   },
   "favicon": "/logo/favicon.png",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#4ADE80",
-    "dark": "#16A34A"
-  },
-  "topbarLinks": [
-    {
-      "name": "Support",
-      "url": "mailto:support@argide.ai"
-    }
-  ],
-  "topbarCtaButton": {
-    "name": "Dashboard",
-    "url": "https://dashboard.argide.ai"
+    "primary": "#0A0A0A",
+    "light": "#FAFAFA",
+    "dark": "#0A0A0A"
   },
   "navigation": {
     "tabs": [
@@ -189,5 +179,30 @@
     "x": "https://x.com/argide",
     "github": "https://github.com/Abhinav-2026",
     "linkedin": "https://www.linkedin.com/company/argide"
+  },
+  "background": {
+    "color": {
+      "light": "#FFFFFF",
+      "dark": "#0A0A0A"
+    }
+  },
+  "fonts": {
+    "family": "Inter"
+  },
+  "appearance": {
+    "default": "system"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Support",
+        "href": "mailto:support@argide.ai"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Dashboard",
+      "href": "https://dashboard.argide.ai"
+    }
   }
 }
