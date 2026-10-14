@@ -9,8 +9,8 @@ Work through this checklist before you put the agent in front of real users. Mos
 
 ### Installation
 
-- **Website is set.** In **Settings** → **Products**, the product's **Website** is your production domain. The widget only loads on that domain and its subdomains. See [Install the widget](/setup/embed-widget#before-you-start).
-- **The snippet is on every page that needs it.** Your production domain is listed under **Verify installation** on **Deploy** → **Install**.
+- **Website is set.** In **Settings** → **Products**, the product's **Website** is your production domain. The widget only loads on that domain and its subdomains, except on shared hosting domains such as `vercel.app`, where only the exact host and its `www.` form match. See [Install the widget](/setup/embed-widget#before-you-start).
+- **The snippet is on every page that needs it.** Check your page templates. Your production domain is listed under **Verify installation** on **Deploy** → **Install**, but a listed domain only shows the script ran there, not that the widget rendered.
 - **The mode is right.** **Regular** for a floating chat bubble, or **Copilot** for a sidebar, chosen in **Deploy** → **Install** or **Agent** → **Mode**. Remove any `data-mode` attribute you used for testing.
 
 ### Agent
@@ -45,7 +45,7 @@ Work through this checklist before you put the agent in front of real users. Mos
 ### Team
 
 - **Teammates are invited.** Everyone who answers conversations is a member. See [Members](/organization/members).
-- **Follow-up is set up.** Turn on the rating survey in **Settings** → **Satisfaction**, and email notifications for unseen replies in **Settings** → **Email**. See [Satisfaction](/conversations/satisfaction) and [Email notifications](/conversations/email-notifications).
+- **Follow-up is set up.** Turn on the rating survey in **Settings** → **Satisfaction**. Email notifications for unseen replies are on by default; check them in **Settings** → **Email**. See [Satisfaction](/conversations/satisfaction) and [Email notifications](/conversations/email-notifications).
 
 ## Test in production
 
@@ -79,7 +79,6 @@ Every conversation lands in **Conversations**:
 
 - **All conversations**, **Resolved**, **Escalated & Handoff**, and **Pending** split conversations by outcome.
 - Open any conversation to read it, reply to the user, or leave an internal note for your team.
-- Filter by sentiment, or show only friction conversations, to find answers that need work.
 - **Satisfaction** reports ratings, response rate, and comments once the survey is on.
 
 See [Conversations](/conversations/inbox) for the full tour. When the agent gets something wrong, fix the source: add knowledge, adjust the instructions, or refine the workflow.

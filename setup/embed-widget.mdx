@@ -142,7 +142,7 @@ window.argide.push(['update', { user_id: 'usr_8241', name: 'Ada Lovelace' }]);
 After Argide loads, `window.argide` is replaced by the function, and `push` no longer exists. If your code can run at either moment, use a small helper that handles both:
 
 ```javascript
-function argide(command, payload) {
+function sendArgideCommand(command, payload) {
   if (typeof window.argide === 'function') {
     window.argide(command, payload);
   } else {
@@ -150,21 +150,23 @@ function argide(command, payload) {
   }
 }
 
-argide('update', { user_id: 'usr_8241', name: 'Ada Lovelace' });
+sendArgideCommand('update', { user_id: 'usr_8241', name: 'Ada Lovelace' });
 ```
 
 Every command can be queued except `setNavigate`. Call it only once `window.argide` is a function:
 
 ```javascript
-function whenArgideReady(callback) {
+function whenArgideReady(callback, attempts = 100) {
   if (typeof window.argide === 'function') return callback();
-  setTimeout(() => whenArgideReady(callback), 100);
+  if (attempts > 0) setTimeout(() => whenArgideReady(callback, attempts - 1), 100);
 }
 
 whenArgideReady(() => {
   window.argide('setNavigate', (path) => router.push(path));
 });
 ```
+
+Here `router` is your app's router. The helper stops checking after 10 seconds, so it doesn't poll forever if Argide fails to load.
 
 ## Troubleshooting
 

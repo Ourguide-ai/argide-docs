@@ -99,12 +99,12 @@ A badge above the fields tells you where the identity came from:
 | Badge | Meaning |
 | ----- | ------- |
 | **Anonymous** | You never identified this user |
-| **Unverified** | Attributes came from `data-*` attributes or `update` — taken on trust |
+| **Unverified** | Attributes came from `data-*` attributes or `update` without a verified identity — taken on trust |
 | **Verified** | Confirmed by a signed token via [Identity verification](/integration/identity-verification) |
 
 ### RAG
 
-Every time the agent searched your [knowledge base](/knowledge-base/knowledge-base) in this conversation. Each search shows the query, how many chunks came back, and the best match score. Expand it to read each chunk and the page it came from.
+This tab shows every time the agent searched your [knowledge base](/knowledge-base/knowledge-base) in this conversation. Each search shows the query, how many chunks came back, and the best match score. Expand it to read each chunk and the page it came from.
 
 Scores are color-coded: green for 70% and above, amber for 50% and above, and red below 50%. Many low scores on a question usually mean your knowledge base doesn't cover it yet.
 

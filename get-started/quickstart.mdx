@@ -6,7 +6,7 @@ description: "Put a working Argide agent on your site in a few minutes"
 Set your product's Website, give the agent something to know, and paste one snippet into your site.
 
 <Warning>
-  **The widget only loads on your product's Website domain and its subdomains.** Until you set a Website, it loads nowhere. There is no exception for `localhost`, so test on a page served from your Website's domain.
+  **The widget only loads on your product's Website domain and its subdomains.** On shared hosting domains such as `vercel.app`, only the exact host and its `www.` form match. Until you set a Website, it loads nowhere. There is no exception for `localhost`, so test on a page served from your Website's domain.
 </Warning>
 
 ## Before you start
@@ -32,13 +32,13 @@ If you completed the onboarding flow when you signed up, you already entered you
   <Step title="Add knowledge">
     Open **Knowledge Base** and give the agent something to answer from:
 
-    - Under **Help center & docs**, select **Public site**, enter your help center or docs URL, and click **Ingest Content**.
+    - Under **Help center & docs**, select **Public site**, enter your help center or docs URL, and click **Ingest Content**. If your docs require sign-in, use **Login-protected site** instead. See [Website and help center](/knowledge-base/website).
     - Under **Files**, drop in documents such as PDF, DOCX, XLSX, TXT, Markdown, CSV, or JSON.
 
     You can skip this to see the widget first, but the agent has little to say until it has knowledge. [Knowledge base](/knowledge-base/knowledge-base) covers each source.
   </Step>
   <Step title="Copy the snippet">
-    Open **Deploy** → **Install**. Under **Add the script**, click **Copy**. The snippet already contains your Product ID:
+    Open **Deploy** → **Install**. Under **Add the script**, click **Copy**. The copied snippet already contains your Product ID where this example shows `YOUR_PRODUCT_ID`:
 
     ```html
     <script>window.argide = window.argide || [];</script>
@@ -55,9 +55,9 @@ If you completed the onboarding flow when you signed up, you already entered you
     Paste the snippet into your site's HTML, just before the closing `</body>` tag, on every page where the agent should appear. Deploy the change to a domain covered by your Website.
   </Step>
   <Step title="Verify the installation">
-    Open your site in a browser. The chat bubble appears in the bottom corner, or the sidebar opens beside your page in copilot mode.
+    Open your site in a browser. The chat bubble appears in the bottom corner, or the sidebar opens beside your page in copilot mode. At 768px wide or narrower, copilot mode shows the chat bubble instead.
 
-    Back in **Deploy** → **Install**, click **Refresh** under **Verify installation**. Your domain appears in the list once the widget has loaded there.
+    Back in **Deploy** → **Install**, click **Refresh** under **Verify installation**. Your domain appears in the list once the widget's script has run there. A listed domain alone doesn't prove the widget rendered, so check that you can see it on the page.
   </Step>
 </Steps>
 

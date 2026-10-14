@@ -130,7 +130,7 @@ async function identifyToArgide() {
     const res = await fetch('/api/argide-token');
     if (!res.ok) throw new Error(`Token request failed: ${res.status}`);
     const { token } = await res.json();
-    window.argide('identify', { token, name: currentUser.name });
+    window.argide('identify', { token });
   } catch (err) {
     console.error('Argide identify failed', err);
   }
@@ -174,7 +174,7 @@ Call one of the reset commands when the user signs out. The widget doesn't detec
 | Command | Token | Conversation | Use when |
 | --- | --- | --- | --- |
 | `window.argide('resetAndClearSession')` | Revoked | Cleared — the widget starts a fresh, anonymous session | The user signs out, especially on shared devices |
-| `window.argide('resetAndPreserveSession')` | Revoked | Kept on screen | You want the conversation to stay visible after sign-out |
+| `window.argide('resetAndPreserveSession')` | Revoked | Kept on screen | The same person stays but should lose access to your API, for example when their own session expires |
 
 Both commands also clear `user_id`, `name`, `email`, and custom attributes from `window.ArgideSettings`.
 

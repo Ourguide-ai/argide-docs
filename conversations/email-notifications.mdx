@@ -25,7 +25,7 @@ The end user can answer by replying to the email. Their answer lands in the same
 
 ## Requirements
 
-The end user needs an email address on record for their session. Pass one when you identify them, with `identify`, `update`, or the `data-email` attribute. See [User identification](/setup/user-identification).
+The end user needs an email address on record for their session. Pass one with `update` or the `data-email` attribute. `identify` stores it only when your product uses **JWT Forward**. See [User identification](/setup/user-identification).
 
 No email goes out when:
 
@@ -33,7 +33,7 @@ No email goes out when:
 - No email was passed for them.
 - The email isn't a valid address.
 
-An email passed with `update` or `data-email` is taken on trust. To make sure replies only go to an address you've confirmed, pass it in a signed token with [Identity verification](/integration/identity-verification).
+An email passed with `update` or `data-email` is taken on trust. A signed token from [Identity verification](/integration/identity-verification) proves the address came from your backend, but not that the end user owns the mailbox. Only pass addresses your app has verified.
 
 ## Turn it on or off
 

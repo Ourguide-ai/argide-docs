@@ -88,7 +88,7 @@ Billing, /settings/billing, Manage payment methods and view invoices.
 
 </CodeGroup>
 
-JSON can also be an object with a `routes` array. In CSV, the header line is optional and you can drop the name column (`path, description`). If a description contains commas, keep the name column so the line is read correctly.
+JSON can also be an object with a `routes` array. In CSV, a header line is optional, but if you include one it must start with `name,`. Without a header you can drop the name column (`path, description`). If a description contains commas, keep the name column so the line is read correctly.
 
 <Warning>
   **Import** replaces every row in the table with the imported routes, and **Save routes** saves exactly what's in the table. Any live route that isn't in your import is removed when you save. To add to existing routes, include them in the import or add the new ones by hand.
@@ -131,17 +131,20 @@ To move the user, the widget tries these in order and stops at the first one tha
 Most single-page apps work without any code. Register your own function with `setNavigate` when your router doesn't react to step 4, or when you want navigation to go through your own logic. The function receives the path to open:
 
 ```js
-function registerArgideNavigate() {
+function registerArgideNavigate(navigate, attempts = 50) {
   if (typeof window.argide === "function") {
-    window.argide("setNavigate", (path) => router.push(path));
-  } else {
-    setTimeout(registerArgideNavigate, 200);
+    window.argide("setNavigate", navigate);
+  } else if (attempts > 0) {
+    setTimeout(() => registerArgideNavigate(navigate, attempts - 1), 200);
   }
 }
-registerArgideNavigate();
 ```
 
-Replace `router.push` with your router's own navigation call.
+Call it where your router is in scope, and pass your router's navigation call. For example, with a router that has a `push` method:
+
+```js
+registerArgideNavigate((path) => router.push(path));
+```
 
 `setNavigate` only works once the widget has loaded. Unlike other commands, it can't be queued with `window.argide.push(...)` before then, which is why the example waits for `window.argide` to become a function.
 
