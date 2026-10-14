@@ -1,72 +1,87 @@
 ---
 title: "Quickstart"
-description: "Get your agent live in 5 minutes"
+description: "Put a working Argide agent on your site in a few minutes"
 ---
 
-## 1. Copy your script tag
-
-In the [dashboard](https://dashboard.argide.ai/dashboard), open **Deploy → Install** and copy your script tag.
-
-## 2. Add to your site
-
-<CodeGroup>
-
-```html HTML
-<script
-  src="https://dashboard.argide.ai/argide-b2b.iife.js"
-  data-api-url="https://api.argide.ai"
-  data-product-id="YOUR_PRODUCT_ID"
-></script>
-```
-
-```jsx React / Next.js
-import { ArgideWidget } from '@argide/react-chat';
-import '@argide/react-chat/styles.css';
-
-
-export default function App() {
-  return (
-    <ArgideWidget
-      apiUrl="https://api.argide.ai"
-      productId="YOUR_PRODUCT_ID"
-    />
-  );
-}
-```
-
-
-
-</CodeGroup>
+Set your product's Website, give the agent something to know, and paste one snippet into your site.
 
 <Warning>
-  Replace `YOUR_PRODUCT_ID` with the actual Product ID from your dashboard.
+  **The widget only loads on your product's Website domain and its subdomains.** On shared hosting domains such as `vercel.app`, only the exact host and its `www.` form match. Until you set a Website, it loads nowhere. There is no exception for `localhost`, so test on a page served from your Website's domain.
 </Warning>
 
+## Before you start
 
+You need:
 
-## 3. Add knowledge (optional)
+- An Argide account. Sign in to the [dashboard](https://dashboard.argide.ai/dashboard).
+- Admin access to your organization. Only organization admins can create or edit products.
+- A site where you can add a `<script>` tag.
 
-In the [Knowledge Base](/knowledge-base/knowledge-base), upload PDFs, crawl your website.
+If you completed the onboarding flow when you signed up, you already entered your website there. Check it in step 1 anyway.
 
-## 4. Connect your API (optional)
+<Steps>
+  <Step title="Set your Website">
+    Your product's Website decides where the widget is allowed to load.
 
-In [API Integration](/integration/api-integration), upload your OpenAPI spec, configure auth, and select endpoints.
+    1. Open **Settings** → **Products**.
+    2. Find your product. To start a new one, click **New Product** and fill in **Product Name** and **Website URL**.
+    3. To change an existing product, click its edit icon, update **Website URL**, and click **Save**.
 
-## Next Steps
+    Check that the product card shows the right **Website**. Enter the full URL, such as `https://example.com`. A Website of `https://example.com` also covers `www.example.com` and `app.example.com`.
+  </Step>
+  <Step title="Add knowledge">
+    Open **Knowledge Base** and give the agent something to answer from:
+
+    - Under **Help center & docs**, select **Public site**, enter your help center or docs URL, and click **Ingest Content**. If your docs require sign-in, use **Login-protected site** instead. See [Website and help center](/knowledge-base/website).
+    - Under **Files**, drop in documents such as PDF, DOCX, XLSX, TXT, Markdown, CSV, or JSON.
+
+    You can skip this to see the widget first, but the agent has little to say until it has knowledge. [Knowledge base](/knowledge-base/knowledge-base) covers each source.
+  </Step>
+  <Step title="Copy the snippet">
+    Open **Deploy** → **Install**. Under **Add the script**, click **Copy**. The copied snippet already contains your Product ID where this example shows `YOUR_PRODUCT_ID`:
+
+    ```html
+    <script>window.argide = window.argide || [];</script>
+    <script
+      src="https://dashboard.argide.ai/argide-b2b.iife.js"
+      data-product-id="YOUR_PRODUCT_ID"
+      data-api-url="https://api.argide.ai"
+    ></script>
+    ```
+
+    Under **Choose how it appears**, pick **Regular** for a floating chat bubble or **Copilot** for a sidebar. The choice saves immediately, and you can change it later without touching the snippet.
+  </Step>
+  <Step title="Paste it into your site">
+    Paste the snippet into your site's HTML, just before the closing `</body>` tag, on every page where the agent should appear. Deploy the change to a domain covered by your Website.
+  </Step>
+  <Step title="Verify the installation">
+    Open your site in a browser. The chat bubble appears in the bottom corner, or the sidebar opens beside your page in copilot mode. At 768px wide or narrower, copilot mode shows the chat bubble instead.
+
+    Back in **Deploy** → **Install**, click **Refresh** under **Verify installation**. Your domain appears in the list once the widget's script has run there. A listed domain alone doesn't prove the widget rendered, so check that you can see it on the page.
+  </Step>
+</Steps>
+
+## If the widget doesn't appear
+
+- **Your domain shows under Verify installation, but no widget shows on the page.** The page's domain isn't your Website or one of its subdomains. Your browser's network tab shows a `403` for the Argide bundle. Fix the **Website URL** in **Settings** → **Products**.
+- **You're testing on `localhost` or a preview URL.** Those don't match your Website. Test on your real domain or a subdomain of it.
+- **Nothing shows under Verify installation.** Check that the snippet is on the page you opened and that `data-product-id` is set.
+
+[Install the widget](/setup/embed-widget#troubleshooting) has the full troubleshooting list.
+
+## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Identity Verification" icon="shield-halved" href="/integration/identity-verification">
-    Authenticate users for personalized experiences
+  <Card title="Identify your users" icon="user" href="/setup/user-identification">
+    Put names and emails on conversations instead of anonymous visitors
   </Card>
-  <Card title="OpenAPI Authentication" icon="key" href="/integration/openapi-auth">
-    Configure API auth (JWT Forward for user actions)
+  <Card title="Shape your agent" icon="sliders" href="/agent/identity-instructions">
+    Set the agent's name, welcome message, and instructions
+  </Card>
+  <Card title="Install the widget" icon="code" href="/setup/embed-widget">
+    Display modes, framework setup, and the `window.argide` commands
+  </Card>
+  <Card title="Go live" icon="flag-checkered" href="/setup/deploy">
+    The checklist before you launch to real users
   </Card>
 </CardGroup>
-
-## Need Help?
-
-Running into issues or want our engineers to customize Argide for your use case?
-
-<Card title="Book a Demo" icon="calendar" href="https://cal.com/eshaangulati/30min">
-  Talk to our team and get a personalized walkthrough.
-</Card>

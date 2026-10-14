@@ -1,39 +1,49 @@
 ---
-title: "Knowledge Base"
-description: "Give your agent product knowledge"
+title: "Knowledge base"
+description: "Give your agent the product knowledge it answers from and the map it navigates with"
 ---
 
-Add content your agent can reference when answering questions.
+The knowledge base is what your agent knows about your product. You manage it on one page in the dashboard: **Knowledge Base**.
 
-## Sources
+The page has three sections. **Website** builds navigation routes, and the other two supply answers.
 
-| Source      | Best for                                    | Updates                    |
-| ----------- | ------------------------------------------- | -------------------------- |
-| **Files**   | PDFs, manuals, docs                         | Manual re-upload           |
-| **Website** | Public docs, help centers                   | Manual re-crawl            |
+| Section | What you add | What it feeds |
+| --- | --- | --- |
+| **Website** | Your web app or site, crawled | [Page navigation](/agent/page-navigation) routes, so the agent can take users to the right page |
+| **Help center & docs** | Your help center or documentation site, crawled | Answers to user questions |
+| **Files** | PDFs, Word and Excel documents, text, Markdown, CSV and JSON files | Answers to user questions |
 
-## How it Works
+<Note>
+  The **Website** crawl doesn't add page content to the knowledge base. It only builds the list of routes the agent uses to navigate. To make your help articles answerable, crawl them under **Help center & docs**.
+</Note>
 
-1. User asks a question
-2. Argide searches your knowledge base for relevant content
-3. Agent uses that content to formulate an accurate answer
+## How the agent uses knowledge
 
-<Info>
-  This is called **RAG** (Retrieval-Augmented Generation).
-</Info>
+1. A user sends a message.
+2. Argide searches your **Help center & docs** and **Files** content for the passages most relevant to that message.
+3. The agent answers from those passages.
 
-## Combining Sources
+The agent grounds its answers in your content, not its general knowledge:
 
-Use multiple sources together for comprehensive coverage:
+- **No relevant passage.** The agent tells the user the knowledge base doesn't cover the question instead of guessing.
+- **Empty knowledge base.** The agent tells the user that no product-specific information is available yet. It can still use its tools and actions.
+- **Workflow in progress.** While the agent is running a [workflow](/agent/workflows), it skips the search and focuses on the task.
 
-- **Files** for product manuals
-- **Website** for your public documentation
+To see what the agent retrieved for a reply, open the conversation in [Conversations](/conversations/inbox) and select the **RAG** tab.
+
+## Keep it fresh
+
+Nothing re-crawls or re-processes on a schedule. When your product or docs change, update the knowledge base yourself:
+
+- **Crawled sites.** Click **Re-crawl** next to the site. A website re-crawl sends any new or changed routes to review before they go live.
+- **Files.** Click **Update** next to the file and pick the new version. It replaces the old content in place.
+- **Outdated sources.** Remove a site or file you no longer want the agent to use.
 
 <CardGroup cols={2}>
-  <Card title="Files" icon="file-lines" href="/knowledge-base/files">
-    Upload documents
+  <Card title="Website & help center" icon="globe" href="/knowledge-base/website">
+    Crawl your app for routes and your docs for answers
   </Card>
-  <Card title="Website" icon="globe" href="/knowledge-base/website">
-    Crawl your site
+  <Card title="Files" icon="file-lines" href="/knowledge-base/files">
+    Upload documents for the agent to answer from
   </Card>
 </CardGroup>

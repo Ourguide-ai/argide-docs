@@ -1,0 +1,158 @@
+---
+title: "Inbox"
+description: "Read every conversation your agent has, reply as a human, and close or snooze them"
+---
+
+Every conversation your agent has with end users lands in the [dashboard](https://dashboard.argide.ai/dashboard) under **Conversations**. Use it to see what your users ask, step in when the agent can't help, and keep track of what still needs attention.
+
+The list updates live. New messages, replies from teammates, and status changes appear without a reload.
+
+## Views
+
+The **Conversations** sidebar splits the inbox into four views:
+
+| View | Shows |
+| ---- | ----- |
+| **All conversations** | Every conversation your agent was involved in |
+| **Resolved** | Conversations where the end user confirmed the answer helped, or left without asking for a teammate |
+| **Escalated & Handoff** | Conversations the agent [escalated](/conversations/escalation) to your team |
+| **Pending** | Conversations not yet resolved or escalated |
+
+Argide classifies each conversation after every agent reply. When the end user sends a new message, a resolved conversation moves back to **Pending** until the agent answers again.
+
+## Open, snoozed, and closed
+
+Each view also has a status picker above the list. It shows a live count, such as **13 Open**. Click it to switch between:
+
+- **Open** — conversations that may still need something
+- **Snoozed** — conversations you set aside until a chosen time
+- **Closed** — finished conversations
+
+Conversations also close on their own:
+
+- **The end user confirms the answer helped.** The conversation closes right away.
+- **The end user goes quiet.** If the agent answered last, it sends one follow-up message a few minutes later. With no reply for two days after that, the conversation closes. A conversation where the end user wrote last and got no answer also closes after two days.
+
+Escalated conversations, and conversations a teammate has replied to, never close automatically.
+
+## Search and filter
+
+Type in **Search…** to match the end user's latest message.
+
+Click **Filters** to narrow the list:
+
+| Filter | Options |
+| ------ | ------- |
+| **User Type** | **All**, **Auth** (users you [identified](/setup/user-identification)), **Anon** (anonymous visitors) |
+| **Date Range** | **All time**, **Today**, **Last 7 days**, **Last 30 days**, **Last 90 days** — by when the conversation started |
+
+A badge on **Filters** shows how many are active. Click **Clear all filters** to reset them.
+
+<Note>
+  Search and filters apply to the conversations already loaded in the list. Scroll down to load older ones.
+</Note>
+
+## The conversation list
+
+Each row shows:
+
+- The end user's name, or **Anonymous visitor** if you haven't identified them
+- Their latest message
+- The rating they gave, if you use [satisfaction surveys](/conversations/satisfaction)
+- Time since the last activity and the number of messages
+- A star, if a teammate marked it as a priority
+
+Click a row to open it. The selected conversation is part of the page URL, so you can copy the address and send it to a teammate.
+
+## Conversation detail
+
+The header shows the conversation ID, which you can copy. It also holds the actions:
+
+- The star icon marks the conversation as a priority for your team. Starred conversations show a star in the list.
+- The **…** menu has **Export conversation as text** and **Export conversation as PDF**. Internal notes are left out of exports.
+- **Snooze** and **Close** — see [Close, snooze, and reopen](#close-snooze-and-reopen).
+
+Below the header are four tabs.
+
+### Chat
+
+The full conversation as the end user saw it: their messages, the agent's replies, the steps the agent took on the page, and replies from your team. Timeline markers show events such as a paused workflow or a rating the end user gave.
+
+Your team's replies show **Seen** once the end user has seen them in the widget, or **Not seen** until then. A reply the end user sent by email shows the sender's address above the message. See [Email notifications](/conversations/email-notifications).
+
+### Details
+
+Who the end user is and how you know:
+
+| Field | Description |
+| ----- | ----------- |
+| **Name** | The user's name, if you passed one |
+| **Email** | The user's email, if you passed one |
+| **User ID** | Your own ID for the user |
+| **Custom attributes** | Any extra attributes you sent — hidden when there are none |
+| **Rating** | The end user's rating, comment, who handled the conversation, and when they were asked — shown once a survey was sent |
+| **Session ID** | The browser session the conversation belongs to |
+| **Started** | When the conversation began |
+
+A badge above the fields tells you where the identity came from:
+
+| Badge | Meaning |
+| ----- | ------- |
+| **Anonymous** | You never identified this user |
+| **Unverified** | Attributes came from `data-*` attributes or `update` without a verified identity — taken on trust |
+| **Verified** | Confirmed by a signed token via [Identity verification](/integration/identity-verification) |
+
+### RAG
+
+This tab shows every time the agent searched your [knowledge base](/knowledge-base/knowledge-base) in this conversation. Each search shows the query, how many chunks came back, and the best match score. Expand it to read each chunk and the page it came from.
+
+Scores are color-coded: green for 70% and above, amber for 50% and above, and red below 50%. Many low scores on a question usually mean your knowledge base doesn't cover it yet.
+
+### Traces
+
+A step-by-step replay of the conversation for debugging. Step through each message, the agent's reasoning, every action it took on the page with the page before and after, tool requests and their output, and any errors from the end user's browser. Use the arrow keys to move between steps.
+
+## Reply as a human
+
+The composer at the bottom of the **Chat** tab has two modes. Switch between them with the menu on its left.
+
+| Mode | Who sees it |
+| ---- | ----------- |
+| **Reply** | Visible to the end user in the widget |
+| **Note** | Internal, teammates only |
+
+Type your message and press **Enter**, or click **Send** (**Add Note** for a note). Press **Shift+Enter** for a new line.
+
+<Warning>
+  Once you send a **Reply**, the conversation belongs to your team. The AI agent stops answering in that conversation for good, and later messages from the end user wait for a teammate.
+</Warning>
+
+In the widget, the end user sees **Support Agent joined the conversation**, and your replies are labeled **Support Agent**. Suggestion chips are hidden from then on.
+
+A reply also reopens a closed conversation and wakes a snoozed one. A note changes nothing.
+
+If the end user doesn't see your reply in the widget within a few minutes, Argide can email it to them. See [Email notifications](/conversations/email-notifications).
+
+## Close, snooze, and reopen
+
+| Action | What it does |
+| ------ | ------------ |
+| **Close** | Moves the conversation to **Closed**. If a teammate replied and [satisfaction surveys](/conversations/satisfaction) are on, the end user is asked to rate your team. |
+| **Snooze** | Hides the conversation until a time you choose, then moves it back to **Open** |
+| **Unsnooze** | Moves a snoozed conversation back to **Open** now |
+| **Re-open** | Moves a closed conversation back to **Open** |
+
+When you snooze, pick **Later today**, **Tomorrow**, **Monday**, **One week**, **One month**, or **Custom** for a date and time. You can also type a duration, such as `1 hour` or `1 week`.
+
+A snoozed conversation also wakes up as soon as the end user sends a new message. A message from the end user reopens a closed conversation too.
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Escalation & handover" icon="arrow-right-arrow-left" href="/conversations/escalation">
+    Decide what happens when users ask for a person
+  </Card>
+  <Card title="Satisfaction (CSAT)" icon="face-smile" href="/conversations/satisfaction">
+    Ask end users to rate closed conversations
+  </Card>
+</CardGroup>

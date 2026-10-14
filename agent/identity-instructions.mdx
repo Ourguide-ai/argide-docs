@@ -1,0 +1,58 @@
+---
+title: "Identity and instructions"
+description: "Name your agent, set its greeting, and tell it how to behave"
+---
+
+Two pages shape who your agent is. **Agent** → **Identity** controls what users see in the chat header and the greeting. **Agent** → **Instructions** controls how the agent behaves and responds.
+
+Both pages show a live preview of the widget on the right. Click **Save Changes** to apply your edits. The widget picks them up the next time a visitor loads your page.
+
+<Note>
+  You need the Admin role in your organization to save changes on any **Agent** page.
+</Note>
+
+## Identity
+
+| Field | What it does | If left empty |
+| ----- | ------------ | ------------- |
+| **Agent Name** | Shown in the widget header. | The header reads "Assistant". |
+| **Welcome Message** | The first message at the top of every conversation, shown as a message from the agent. Supports Markdown. | A built-in greeting. |
+
+Both fields are display-only. The agent never sees them, so it won't know its own name unless you tell it in [Instructions](#instructions).
+
+When a member of your team takes over a conversation from the inbox, the header changes to "Support Agent" for that conversation. See [Escalation](/conversations/escalation).
+
+## Instructions
+
+**System Prompt** is free text the agent reads on every turn of every conversation. Use it to set:
+
+- **Persona and tone.** "You are Ava, the assistant for Acme Billing. Be brief and friendly. Never use emoji."
+- **Scope.** "Only answer questions about invoices, payments, and subscriptions. For anything else, say you can't help with that here."
+- **House rules for answers.** "Always link to the relevant help article when one exists."
+
+Click the expand icon next to the field label to edit in a full-screen editor.
+
+### What instructions can't do
+
+Your instructions sit alongside Argide's built-in rules and can't override them. Instructions can't:
+
+- Change how the agent uses its tools, such as [page navigation](/agent/page-navigation), [workflows](/agent/workflows), or [in-page actions](/agent/in-page-actions).
+- Add steps or conditions to a workflow.
+- Stop the agent from using a capability you've turned on, or make it claim a capability is unavailable.
+
+The agent ignores anything in your instructions that tries to do these things and keeps your persona and tone. To turn a capability off, use its own page under **Tools** instead.
+
+<Tip>
+  Keep instructions about *how* to talk and *what* to cover. Put product facts in the [knowledge base](/knowledge-base/knowledge-base), where the agent searches them when it answers.
+</Tip>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Mode and design" icon="palette" href="/agent/mode-design">
+    Choose widget or copilot and match your brand
+  </Card>
+  <Card title="User suggestions" icon="lightbulb" href="/agent/user-suggestions">
+    Give users one-click starting points
+  </Card>
+</CardGroup>

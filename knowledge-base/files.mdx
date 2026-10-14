@@ -1,51 +1,77 @@
 ---
 title: "Files"
-description: "Upload documents to your knowledge base"
+description: "Upload documents for your agent to answer questions from"
 ---
 
-Upload documents for your agent to reference.
+Upload documents such as product manuals, policies, or FAQs. Argide reads them into the knowledge base, and the agent answers user questions from their content.
 
-## Supported Formats
+Files are in the **Files** section of the **Knowledge Base** page.
 
-| Format   | Extensions              |
-| -------- | ----------------------- |
-| PDF      | `.pdf`                  |
-| Word     | `.docx`                 |
-| Text     | `.txt`, `.md`           |
-| Excel    | `.xlsx`, `.xls`, `.csv` |
+## Supported files
 
-## Upload
+| Format | Extension | Max size |
+| --- | --- | --- |
+| PDF | `.pdf` | 10 MB |
+| Word | `.docx` | 10 MB |
+| Excel | `.xlsx` | 10 MB |
+| Plain text | `.txt` | 5 MB |
+| Markdown | `.md` | 5 MB |
+| CSV | `.csv` | 5 MB |
+| JSON | `.json` | 5 MB |
 
-Drag and drop files or click to browse. Multiple files supported.
+Older formats such as `.doc` and `.xls` aren't supported. Save them as `.docx` or `.xlsx` first.
 
-### Visual Processing
+How each format is read:
 
-Enable the **Visual Processing** checkbox before uploading PDFs with:
+- **PDF.** Text is extracted from every page, including scanned pages. Password-protected PDFs can't be read.
+- **Excel.** Every sheet is read.
+- **CSV.** The first row is treated as column headers, and each following row is read against them. Give your columns clear headers.
+- **JSON.** Nested keys are read as paths, such as `plans.pro.price`.
 
-- Screenshots or diagrams
-- Complex tables
-- Scanned documents
+## Upload files
 
-<Info>
-  Visual processing is slower but extracts content from images.
-</Info>
+<Steps>
+  <Step title="Open the Files section">
+    Go to **Knowledge Base** and scroll to **Files**.
+  </Step>
+  <Step title="Add your files">
+    Drag files onto the upload area, or click **Select Files**. You can add several files at once.
+  </Step>
+  <Step title="Wait for processing">
+    Each file appears under **Uploaded Files** as **Queued**, then **Processing**. The status updates on its own. Once it shows **Completed**, the agent can answer from it.
+  </Step>
+</Steps>
 
-## Upload Status
+File names must be unique. Uploading a file with the same name as an existing one is rejected. Use **Update** on the existing file instead.
 
-| Status         | Meaning             |
-| -------------- | ------------------- |
-| **Queued**     | Waiting to process  |
-| **Processing** | Being indexed       |
-| **Complete**   | Ready to use        |
-| **Failed**     | Check error message |
+## File statuses
 
-## Managing Files
+| Status | Meaning |
+| --- | --- |
+| **Queued** | Waiting to be processed. |
+| **Processing** | Being read into the knowledge base. |
+| **Completed** | Ready. The row shows how many chunks were stored. |
+| **Failed** | Processing failed. The row shows the error. |
+| **Needs attention** | Argide couldn't process the file and stopped retrying. The row shows why. |
 
-View all uploaded files in the document list. Click **delete** to remove a file (cannot be undone).
+Argide retries temporary failures automatically. A file ends up in **Needs attention** when retrying won't help, for example:
 
-## Tips
+- The PDF is password-protected.
+- The file has no readable text.
+- The JSON is invalid.
 
-- Keep files under **50MB** for fastest processing
-- Use **descriptive filenames**
-- Remove unnecessary pages before upload
-- **Test in Sandbox** after adding content
+Fix the file, then upload the corrected version with **Update**.
+
+## Update a file
+
+To replace a file with a newer version, click **Update** next to it and choose the new file. Argide re-processes it in place, and the new content replaces the old.
+
+The replacement must also be a supported type within the size limit. It can have a different name.
+
+## Remove a file
+
+Click the trash icon (**Remove file**) next to the file. Its content is removed from the knowledge base, and the agent stops answering from it.
+
+<Note>
+  You can't update or remove a file while it's **Queued** or **Processing**. Wait for it to finish first.
+</Note>

@@ -1,0 +1,42 @@
+---
+title: "Email notifications"
+description: "Email end users the replies your team sends when they've left the chat"
+---
+
+When a teammate replies to an end user who has already left your site, the reply would sit unseen in the widget. Email notifications send it to them by email instead, and their answer comes back into the same conversation.
+
+## When an email goes out
+
+Argide emails a reply when all of these are true:
+
+- **A teammate sent it.** Only messages sent with **Reply** from the [inbox](/conversations/inbox) count. AI answers and internal notes are never emailed.
+- **The end user hasn't seen it.** The reply went unseen in the widget for 3 minutes.
+- **Argide knows their email address.** See [Requirements](#requirements).
+
+Replies sent close together are grouped. The email goes out once 3 minutes have passed since the latest reply, so several quick messages arrive as one email. If the end user sees the replies in the widget before then, no email is sent.
+
+Each reply is emailed at most once. Replies more than 24 hours old are never emailed, so turning the setting back on doesn't send a backlog.
+
+## What the end user receives
+
+The email quotes the end user's last message, followed by your team's replies, each marked with the teammate's initials. The subject line is based on their last message, or reads "New message from" and your product name. If your product has a website set, the email also links back to it.
+
+The end user can answer by replying to the email. Their answer lands in the same conversation in your inbox, where the **Chat** tab shows the sender's address above it.
+
+## Requirements
+
+The end user needs an email address on record for their session. Pass one with `update` or the `data-email` attribute. `identify` stores it only when your product uses **JWT Forward**. See [User identification](/setup/user-identification).
+
+No email goes out when:
+
+- The end user is anonymous.
+- No email was passed for them.
+- The email isn't a valid address.
+
+An email passed with `update` or `data-email` is taken on trust. A signed token from [Identity verification](/integration/identity-verification) proves the address came from your backend, but not that the end user owns the mailbox. Only pass addresses your app has verified.
+
+## Turn it on or off
+
+Open **Settings** → **Email** and use the toggle under **Email unseen agent replies**. The label reads **Email notifications are on** or **Email notifications are off**.
+
+Email notifications are on by default. The setting applies to the current product, and only an organization admin can change it.

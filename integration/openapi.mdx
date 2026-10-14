@@ -1,128 +1,167 @@
 ---
-title: "OpenAPI"
-description: "Connect your REST API"
+title: "Connect your OpenAPI spec"
+description: "Turn your API's OpenAPI spec into tools the agent can call"
 ---
 
-Upload an OpenAPI (Swagger) spec to let your agent call your API endpoints.
+Open **Tools** → **Server Side** in the dashboard. The page has three sections, completed in order: **API Configuration**, **OpenAPI Specification**, and **Generated Tools**. Only admins can save changes here.
 
-## Setup
+## Before you start
 
-### 1. Configure Connection
+You need an OpenAPI **3.x** spec in JSON or YAML. Swagger 2.0 specs are rejected with "Only OpenAPI 3.x is supported" — convert yours to 3.x first.
 
-In **Integration → OpenAPI**:
+The spec doesn't have to describe your whole API. A smaller spec with only the endpoints the agent should use is easier to review and gives the agent fewer wrong choices.
 
-| Field         | Description                                              |
-| ------------- | -------------------------------------------------------- |
-| **Base URL**  | Your API root (e.g., `https://api.yourcompany.com/v1`)  |
-| **Auth Type** | None, API Key, Bearer Token, or JWT Forward              |
+## 1. Save your API configuration
 
-### 2. Configure Auth
+| Field | What to enter |
+| --- | --- |
+| **API Base URL** | The root that every path in your spec is appended to, such as `https://api.example.com/v1`. Required. |
+| **Authentication** | **None**, **Bearer Token**, **API Key**, or **JWT Forward**. See [Authentication](/integration/openapi-auth). |
 
-<CodeGroup>
+Click **Save Configuration**. You must save this section before you can upload a spec — otherwise you see "Save your API configuration before uploading a specification."
 
-```text API Key
-Header name: X-API-Key
-Value: your-secret-key
-```
+<Note>
+  Argide ignores the `servers` list in your spec. Every request goes to the **API Base URL** you enter here.
+</Note>
 
-```text Bearer Token
-Header name: Authorization
-Value: Bearer your-token-here
-```
+## 2. Upload your spec
 
-```text JWT Forward
-Forwards the authenticated user's identity token to your API.
-See OpenAPI Authentication for details.
-```
+Drag your `.json`, `.yaml`, or `.yml` file onto **Upload OpenAPI Specification**, or click it to browse. Argide parses the spec and confirms how many tools it generated.
 
-</CodeGroup>
+To change the spec later, either:
 
-### 3. Upload Spec
+- **Re-upload** a new file onto the same drop zone, or
+- Click **Edit spec** to open the **Edit OpenAPI Spec** editor. Paste or edit the JSON or YAML, then click **Save**. Argide regenerates the tools as soon as it saves.
 
-Drag and drop your `.json` or `.yaml` OpenAPI spec file.
+Either way, endpoints you had enabled stay enabled as long as their `operationId` is unchanged. Endpoints that are new to the spec start disabled.
 
-### 4. Enable Tools
+## 3. Enable generated tools
 
-Go to [Actions](/agent/actions) and select which endpoints to enable.
+**Generated Tools** lists one tool per operation, with its HTTP method, tool name, and path. Expand a tool to see its `operationId`, path, and the input schema the agent fills in.
 
----
+1. Switch on each endpoint the agent may call, or click **Enable All**.
+2. Click **Save Changes**.
 
-## Example Spec
+Nothing is enabled until you save. A tool that's switched off is never offered to the agent.
 
-```yaml
-openapi: 3.0.0
+<Warning>
+  The agent calls enabled endpoints without asking the user first. Enable write operations — `POST`, `PUT`, `PATCH`, `DELETE` — only when you're comfortable with the agent performing them on its own.
+</Warning>
+
+## How your spec becomes tools
+
+### Tool names
+
+Each tool is named after the operation's `operationId`:
+
+- Characters other than letters, digits, and `_` become `_`. `get-order` becomes `get_order`.
+- A name that starts with a digit is prefixed with `api_`.
+- Names are cut to 64 characters.
+- An operation without an `operationId` gets one from its method and path. `GET /orders/{orderId}` becomes `get_orders_orderid`.
+
+If two operations end up with the same name, only the first becomes a tool. Give every operation a unique, readable `operationId`.
+
+### What the agent sees
+
+The agent decides which tool to call from its description. Argide builds it from the operation's `summary`, then its `description`, then the method and path.
+
+The agent fills in:
+
+- **Path parameters** — always required.
+- **Query parameters** — required when the spec marks them `required`.
+- **Header parameters** — exposed as `header_<name>`. The agent can never set `Authorization` or your API key header; Argide sets those from your **Authentication** settings.
+- **Request body** — from the operation's `application/json` schema. A body is only sent with `POST`, `PUT`, `PATCH`, and `DELETE`.
+
+Local `$ref`s (`#/components/...`) are resolved. Cookie parameters and request bodies with other content types, such as form data or file uploads, aren't supported.
+
+### What the agent gets back
+
+If an operation declares a `200` response with an `application/json` schema, Argide keeps only the fields that schema declares and drops the rest before the agent sees the response. This applies to every response from that endpoint, including errors. Use it to keep large or sensitive fields away from the agent — and make sure the schema lists every field the agent needs.
+
+Responses that aren't JSON reach the agent as plain text.
+
+## Write a spec the agent uses well
+
+- **Write a `summary` for every operation.** It's the first thing the agent reads, and the widget shows it to the user while the call runs. "Get order status" beats "GET order".
+- **Explain when to use the endpoint in `description`.** For example: "Use when the user asks where their order is or when it will arrive."
+- **Describe every parameter.** Say what the value is and where it comes from: "The order number, shown as `#12345` in the user's order history."
+- **Use `enum` for fixed values.** The agent picks from the list instead of guessing.
+- **Use clear `operationId`s.** `cancelSubscription`, not `post3`.
+
+```yaml Example spec
+openapi: 3.0.3
 info:
-  title: My API
+  title: Acme API
   version: 1.0.0
 paths:
   /orders/{orderId}:
     get:
-      operationId: getOrder
-      summary: Get order details
+      operationId: getOrderStatus
+      summary: Get order status
+      description: Use when the user asks where their order is or when it will arrive.
       parameters:
         - name: orderId
           in: path
           required: true
+          description: The order number, without the leading "#".
           schema:
             type: string
       responses:
-        '200':
-          description: Order details
+        "200":
+          description: The order
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [processing, shipped, delivered, cancelled]
+                  estimatedDelivery:
+                    type: string
+                    format: date
 ```
 
----
+## Limits
 
-## Client-Side Tools
+| Limit | Value |
+| --- | --- |
+| Spec format | OpenAPI 3.x, JSON or YAML |
+| Endpoints per spec | 100. Operations past the first 100 are ignored. |
+| Request timeout | 30 seconds |
+| Response size | 300,000 characters. Longer responses are truncated. |
+| Request body content type | `application/json` only |
+| Tool name length | 64 characters |
 
-To let the agent trigger browser-side actions (like navigation), add paths prefixed with `/client/`:
+## Delete the configuration
 
-```yaml
-paths:
-  /client/navigateToPage:
-    post:
-      operationId: navigateToPage
-      summary: Navigate to a page
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                path:
-                  type: string
-```
-
-Then register the matching tool in your frontend:
-
-```javascript
-window.argide('registerTools', {
-  navigateToPage: async ({ path }) => {
-    router.push(path);
-    return { success: true };
-  }
-});
-```
-
-<Info>
-  The `operationId` must match the key in `registerTools`.
-</Info>
-
----
-
-## Tips
-
-- Use descriptive `summary` and `description` fields
-- Use clear `operationId` names (`getOrderStatus` not `get1`)
-- Only expose safe operations
+At the bottom of the page, click **Delete** next to **Delete Configuration**, then confirm. This removes your API configuration, the spec, and every generated tool. The agent can no longer call your API.
 
 ## Troubleshooting
 
-| Issue               | Solution                                                          |
-| ------------------- | ----------------------------------------------------------------- |
-| Spec won't upload   | Validate at [editor.swagger.io](https://editor.swagger.io)       |
-| API calls failing   | Check base URL and auth credentials                               |
-| Agent not using API | Enable tools in Actions, test in Sandbox                          |
-
-<Card title="OpenAPI Authentication" icon="key" href="/integration/openapi-auth">
-  Detailed auth guide including JWT Forward
-</Card>
+<AccordionGroup>
+  <Accordion title="The upload fails">
+    - "Only OpenAPI 3.x is supported" — the spec is Swagger 2.0 or has no `openapi` field. Convert it to OpenAPI 3.x.
+    - "Spec is neither valid JSON nor valid YAML" — fix the syntax. Validating the file in an OpenAPI editor shows the error.
+    - The spec has no `paths` object — add a `paths` section with at least one operation.
+    - "Save your API configuration before uploading a specification." — save **API Configuration** first.
+  </Accordion>
+  <Accordion title="An endpoint is missing from Generated Tools">
+    - The spec has more than 100 operations. Trim it to the endpoints the agent needs.
+    - Two operations produce the same tool name. Give them distinct `operationId`s.
+  </Accordion>
+  <Accordion title="The agent doesn't use my API">
+    - Check that the tool is switched on and that you clicked **Save Changes**.
+    - Improve the operation's `summary` and `description` so it's clear when the endpoint applies.
+    - If you renamed an `operationId`, the tool is now a new tool and starts disabled. Switch it back on.
+  </Accordion>
+  <Accordion title="Calls fail or hit the wrong URL">
+    - The final URL is your **API Base URL** followed by the spec path. If both contain a prefix like `/api`, you get `/api/api/...`. Put the prefix in one place only.
+    - Make sure the **API Base URL** is reachable from the public internet. `localhost` and private network addresses don't work.
+    - Calls that take longer than 30 seconds time out.
+    - A `401` or `403` usually means the credentials are wrong. See [Authentication](/integration/openapi-auth).
+  </Accordion>
+  <Accordion title="The agent ignores part of a response">
+    The operation's `200` response schema doesn't declare that field, so Argide drops it. Add the field to the schema.
+  </Accordion>
+</AccordionGroup>

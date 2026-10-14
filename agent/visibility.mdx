@@ -1,107 +1,98 @@
 ---
 title: "Visibility"
-description: "Control when the widget appears"
+description: "Control when the widget appears on your page"
 ---
 
-By default the widget appears as soon as your script loads. Use `data-visibility` to defer it, and the `update` command to show or hide it later — for example, only after the user signs in.
+By default the widget appears as soon as the script loads. To show it only at the right moment, such as after a user signs in, hide it on load with `data-visibility` and reveal it later with the `update` command.
 
-## Defer the Widget
+## Hide the widget on load
 
-Add `data-visibility="false"` to your embed script:
+Add `data-visibility="false"` to the script tag:
 
 ```html
+<script>window.argide = window.argide || [];</script>
 <script
   src="https://dashboard.argide.ai/argide-b2b.iife.js"
-  data-api-url="https://api.argide.ai"
   data-product-id="YOUR_PRODUCT_ID"
+  data-api-url="https://api.argide.ai"
   data-visibility="false"
 ></script>
 ```
 
-The widget does not appear and does not connect: no launcher button, no conversation, no chat session. The script still loads, so the widget is ready to appear the moment you reveal it.
+Nothing renders: no launcher bubble, no chat panel, no conversation. The script still loads, so the widget appears as soon as you reveal it, and commands such as `identify` still run while it's hidden.
 
-<Warning>
-  The script loads asynchronously, so `window.argide()` may not exist yet when your page code runs. To queue commands safely, add this line **before** the script tag:
+Only the exact value `"false"` hides the widget. Any other value, or no attribute at all, shows it, so existing embed code keeps working unchanged.
 
-  ```html
-  <script>window.argide = window.argide || [];</script>
-  ```
+You can set the same flag in `window.ArgideSettings` before the script loads:
 
-  You can then call `window.argide.push(['update', { visibility: true }])` at any time, and the command runs as soon as the widget is ready.
+```html
+<script>
+  window.ArgideSettings = { visibility: false };
+</script>
+```
 
-  Only the exact value `"false"` hides the widget. Any other value — and leaving the attribute off entirely — shows it. So a missing attribute always means visible, and the default embed code keeps working unchanged.
-</Warning>
+## Show and hide
 
----
-
-## Show and Hide
-
-The `update` command takes a `visibility` property:
+Pass `visibility` to the `update` command:
 
 ```javascript
-// Show the widget
 window.argide('update', { visibility: true });
 
-// Hide it again
 window.argide('update', { visibility: false });
 ```
 
-This is the only way to change visibility — there are no separate show or hide commands.
+This is the only way to change visibility. There are no separate show or hide commands.
 
-<Info>
-  `visibility` is a display setting. It stays in the browser and is never sent to Argide, so it never appears on a conversation.
-</Info>
+Hiding the widget closes the chat panel and removes the bubble from the page. The conversation is kept, so it's still there when you show the widget again.
 
----
-
-## Show the Widget Only to Signed-In Users
-
-Defer the widget on the script tag, then reveal it after login. Do it in one `update` call and pass the user's attributes at the same time, so the agent knows who it is talking to from the first message:
-
-```html
-<script
-  src="https://dashboard.argide.ai/argide-b2b.iife.js"
-  data-api-url="https://api.argide.ai"
-  data-product-id="YOUR_PRODUCT_ID"
-  data-visibility="false"
-></script>
-```
+The first line of the embed code, `window.argide = window.argide || [];`, lets you call the widget before the script has finished loading. If your code may run first, queue the command instead:
 
 ```javascript
-// After the user signs in
+window.argide.push(['update', { visibility: true }]);
+```
+
+The command runs as soon as the widget is ready.
+
+<Info>
+  `visibility` stays in the browser. It's never sent to Argide and never appears on a conversation.
+</Info>
+
+## Show the widget only to signed-in users
+
+Hide the widget on the script tag, then reveal it after login. Send the user's attributes in the same `update` call so the agent knows who it's talking to from the first message:
+
+```javascript
 window.argide('update', {
   visibility: true,
   user_id: 'usr_8241',
   name: 'Ada Lovelace',
   email: 'ada@example.com',
 });
+```
 
-// On logout
+On logout, hide the widget and clear the session:
+
+```javascript
 window.argide('update', { visibility: false });
 window.argide('resetAndClearSession');
 ```
 
-See [User Identification](/setup/user-identification) for the attributes you can pass.
-
----
+See [User identification](/setup/user-identification) for the attributes you can pass.
 
 ## Reference
 
-| Attribute         | Description                                        | If omitted        |
-| ----------------- | -------------------------------------------------- | ----------------- |
-| `data-visibility` | Set to `"false"` to keep the widget hidden on load | Widget is visible |
+| Setting | Where | Values | Default |
+| ------- | ----- | ------ | ------- |
+| `data-visibility` | Script tag attribute | `"false"` hides the widget on load | Visible |
+| `visibility` | `window.ArgideSettings`, or the `update` command | `true` or `false` | `true` |
 
-You can also set `visibility` in `window.ArgideSettings` before the script loads.
-
----
-
-## Next Steps
+## Next steps
 
 <CardGroup cols={2}>
-  <Card title="User Identification" icon="user" href="/setup/user-identification">
+  <Card title="User identification" icon="user" href="/setup/user-identification">
     Tell the agent who the user is
   </Card>
-  <Card title="Embed Widget" icon="code" href="/setup/embed-widget">
+  <Card title="Install the widget" icon="code" href="/setup/embed-widget">
     All script tag attributes and commands
   </Card>
 </CardGroup>

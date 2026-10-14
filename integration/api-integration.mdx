@@ -1,43 +1,64 @@
 ---
-title: "API Integration"
-description: "Connect your REST API so the agent can take actions"
+title: "API integration"
+sidebarTitle: "Overview"
+description: "Let the agent call your backend API to look up data and take actions"
 ---
 
-API Integration lets your Argide agent call your backend to perform actions like checking order status, canceling subscriptions, or updating user profiles.
+API integration is optional. Your agent already answers from your knowledge base, navigates your app, and works in the page without it. Connecting your API adds one thing: the agent can call your REST endpoints directly, from Argide's servers, to fetch data or make changes for the user.
 
-## How It Works
+## When you need it
 
-1. You provide an **OpenAPI spec** describing your API endpoints
-2. Argide maps those endpoints to agent capabilities
-3. When a user asks the agent to do something, it calls the appropriate endpoint
+Connect your API when the agent needs something it can't get from the page:
 
-## Adding Your OpenAPI Spec
+- **Data that isn't on screen.** Order status, invoice history, usage limits, account details.
+- **Actions that are faster through the API.** Cancel a subscription, issue a refund, create a support ticket, update a setting.
+- **Per-user answers.** "Where's *my* order?" — with [JWT Forward](/integration/identity-verification), each call runs as the signed-in user.
 
-1. Go to **API Integration** in your dashboard
-2. Upload your OpenAPI/Swagger spec (JSON or YAML)
-3. Argide will parse the spec and show available endpoints
-4. Select which endpoints the agent can access
+If the agent only needs to explain your product or guide users through the UI, skip this section.
 
-```yaml Example OpenAPI Spec
-openapi: "3.0.0"
-info:
-  title: "My API"
-  version: "1.0.0"
-paths:
-  /orders/{id}:
-    get:
-      summary: "Get order status"
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: "Order details"
-```
+## How it works
 
-## Authentication
+1. **You describe your API.** You upload an OpenAPI 3.x spec. Each operation in it becomes a tool the agent can call.
+2. **You choose what the agent can call.** New tools start disabled. You turn on only the endpoints you want the agent to use.
+3. **The agent picks a tool.** When a user's request matches an enabled endpoint, the agent fills in its parameters from the conversation.
+4. **Argide calls your API.** Argide's servers send the request to your **API Base URL**, with the authentication you configured.
+5. **The agent answers.** It reads the response and replies to the user. While the call runs, the widget shows the endpoint's `summary` as the action name.
 
-Your API likely requires authentication. See [OpenAPI Auth](/integration/openapi-auth) for supported auth methods.
+<Note>
+  Argide's servers make the request, not the user's browser. Your **API Base URL** must be reachable from the internet, and API calls don't show the Allow/Deny approval card that [in-page actions](/agent/in-page-actions) can. Enable only endpoints you're comfortable with the agent calling on its own.
+</Note>
+
+## Set it up
+
+All of this lives on one dashboard page: **Tools** → **Server Side**. You need the admin role to change it.
+
+<Steps>
+  <Step title="Save your API configuration">
+    Enter your **API Base URL**, choose an **Authentication** type, and click **Save Configuration**. You must save this before you can upload a spec.
+  </Step>
+  <Step title="Upload your OpenAPI spec">
+    Drop in a JSON or YAML OpenAPI 3.x file. Argide generates one tool per operation.
+  </Step>
+  <Step title="Enable the tools">
+    Under **Generated Tools**, switch on the endpoints the agent may call, then click **Save Changes**.
+  </Step>
+  <Step title="Set up identity verification (JWT Forward only)">
+    If your API acts on behalf of the signed-in user, have your backend mint a token for each user and pass it to the widget.
+  </Step>
+</Steps>
+
+The same enabled tools are also available to tasks you run through the [Agent SDK](/agent-sdk/overview).
+
+## Next steps
+
+<CardGroup cols={3}>
+  <Card title="Connect your OpenAPI spec" icon="file-code" href="/integration/openapi">
+    Configure the base URL, upload the spec, and enable tools
+  </Card>
+  <Card title="Authentication" icon="key" href="/integration/openapi-auth">
+    Choose how Argide authenticates to your API
+  </Card>
+  <Card title="Identity verification" icon="user-check" href="/integration/identity-verification">
+    Call your API as the signed-in user
+  </Card>
+</CardGroup>

@@ -1,77 +1,82 @@
 ---
-title: "User Suggestions"
-description: "Show quick-action chips in the chat widget"
+title: "User suggestions"
+description: "Give users one-click starting points and follow-up questions in the chat"
 ---
 
-User suggestions are clickable chips that appear in the chat widget before the user types anything. They give users one-tap access to common questions and actions — no typing required.
+Suggestions are clickable chips in the chat. A user clicks one instead of typing, and the chip's message is sent to the agent as if they had typed it. Each chip can have follow-up chips that appear after the agent answers, so you can guide users down a short path.
 
-## Setup
+Set them up in **Agent** → **Suggestions**. You need the Admin role in your organization to save changes.
+
+## Add suggestions
 
 <Steps>
-  <Step title="Open the dashboard">
-    In the [dashboard](https://dashboard.argide.ai/dashboard), open **Agent → Suggestions**.
+  <Step title="Add a chip">
+    Click **Add your first suggestion**, or **Add Suggestion** if you already have some.
   </Step>
-  <Step title="Add suggestions">
-    Click **Add Suggestion** and fill in:
-
-    | Field            | Description                                                              |
-    | ---------------- | ------------------------------------------------------------------------ |
-    | **Button label** | Text shown on the chip (e.g., "Track my order")                          |
-    | **Message**      | Text sent to the agent when clicked. Defaults to the label if left empty |
+  <Step title="Fill in the label and message">
+    | Field | What it does |
+    | ----- | ------------ |
+    | **Button label** | The text on the chip. Required. |
+    | **Message** | What gets sent to the agent when the chip is clicked. If you leave it empty, the label is sent. |
   </Step>
-  <Step title="Save and preview">
-    Click **Save Changes**. The live preview on the right shows exactly how the chips will appear in your widget.
+  <Step title="Add follow-ups (optional)">
+    While a chip is open for editing, click **Add follow-up** to nest a chip under it. Follow-ups can have their own follow-ups.
+  </Step>
+  <Step title="Save">
+    Click **Save Changes**. If any chip has an empty label, the save stops and highlights it. Add a label or remove the chip, then save again.
   </Step>
 </Steps>
 
----
+Click a saved chip's label to edit it again. The preview on the right shows your top-level chips in the widget.
 
-## How It Works
+## What users see
 
-1. You configure suggestion chips in the dashboard
-2. The widget loads and displays them as clickable buttons above the input
-3. When a user clicks a chip, the **message** is sent to the agent as if the user typed it
-4. If the message field is empty, the **label** text is sent instead
+1. **Before the first message**, the top-level chips appear stacked above the message box, under the welcome message. On phones, the first five show with a **See all** link for the rest.
+2. **When a user clicks a chip**, its message is sent. After the agent finishes replying, that chip's follow-ups appear. Follow-ups replace the previous set of chips.
+3. **When a chip has no follow-ups, or the user types their own message**, the chips step back. The top-level set stays available behind a **Show suggestions** toggle, collapsed by default.
+4. **When a new conversation starts**, the top-level chips appear again.
 
----
+The agent knows which follow-ups the user is about to see, so it can shape its answer to lead into them without listing them itself.
 
-## Best Practices
+## Show suggestions only to logged-in users
+
+Turn on **Show suggestions only to logged-in users** to hide every chip from anonymous visitors. It's off by default.
+
+"Logged in" means the widget has received a signed identity token for this page load: through the `identify` command. Passing a `user_id` with `update` alone doesn't count. See [User identification](/setup/user-identification).
+
+The same rule hides [workflow](#workflows-as-suggestions) chips.
+
+## When suggestions are hidden
+
+Chips disappear from a conversation once a member of your team takes it over from the inbox. The agent no longer replies there, so a chip would send a message nothing answers. See [Escalation](/conversations/escalation).
+
+## Workflows as suggestions
+
+Each enabled, ready [workflow](/agent/workflows) with **Show as suggestion** on also appears as a chip, after your suggestion chips, labeled with the workflow's title. Clicking it doesn't send a message. It asks the user to confirm first, with **Run workflow** for an automated workflow or **Start walkthrough** for a guided one.
+
+To keep a workflow off the chip row, clear **Show as suggestion** on it in **Tools** → **Workflows**. The workflow stays enabled, and the agent can still run it when a user asks for that task.
+
+## Writing good suggestions
+
+- **Keep labels short.** Two to four words keep chips on one line.
+- **Put detail in the message.** The label is for the user; the message is for the agent. "Billing issue" can send "I have a question about a charge on my latest invoice."
+- **Start from real questions.** Look at your most frequent conversations in the [inbox](/conversations/inbox) and turn them into chips.
+- **Offer a few, not many.** Three or four top-level chips are easier to scan than ten.
+
+| Use case | Label | Message |
+| -------- | ----- | ------- |
+| E-commerce | Track my order | What is the status of my most recent order? |
+| E-commerce | Return an item | I want to start a return |
+| SaaS | Get started | Walk me through the initial setup |
+| SaaS | Upgrade plan | What plans are available and how do I upgrade? |
+
+## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Keep labels short" icon="text-size">
-    2–4 words work best so chips don't wrap on mobile (e.g., "Track order" instead of "I want to track my order status")
+  <Card title="Workflows" icon="route" href="/agent/workflows">
+    Record tasks the agent can run for users
   </Card>
-  <Card title="Use specific messages" icon="message">
-    The label is what users see; the message is what the agent receives. Use the message field for detailed prompts the agent can act on
-  </Card>
-  <Card title="Cover common questions" icon="circle-question">
-    Look at your most frequent conversations in [Activity](/monitor/activity) and turn them into suggestions
-  </Card>
-  <Card title="Limit to 3–4 chips" icon="grip">
-    Too many options cause decision fatigue. Focus on the most valuable actions
-  </Card>
-</CardGroup>
-
----
-
-## Examples
-
-Here are some suggestions for different use cases:
-
-| Use Case     | Label              | Message                                  |
-| ------------ | ------------------ | ---------------------------------------- |
-| E-commerce   | Track my order     | What is the status of my most recent order? |
-| E-commerce   | Return an item     | I want to start a return                 |
-| SaaS         | How do I get started? | Walk me through the initial setup     |
-| SaaS         | Upgrade plan       | What plans are available and how do I upgrade? |
-| Support      | Talk to a human    | I'd like to speak with a support agent   |
-| Support      | Billing issue      | I have a question about my bill          |
-
-<CardGroup cols={2}>
-  <Card title="Actions" icon="bolt" href="/agent/actions">
-    Enable agent capabilities
-  </Card>
-  <Card title="Embed Widget" icon="code" href="/setup/embed-widget">
-    Full widget setup guide
+  <Card title="User identification" icon="user" href="/setup/user-identification">
+    Tell the widget who is logged in
   </Card>
 </CardGroup>

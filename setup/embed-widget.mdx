@@ -1,410 +1,189 @@
 ---
-title: "Embed Widget"
-description: "Add the Argide widget to your website"
-sidebarTitle: "Embed Widget"
+title: "Install the widget"
+description: "Add the Argide script tag to your site, choose widget or copilot mode, and control it with window.argide"
+sidebarTitle: "Install the widget"
 ---
 
-## Installation
+One script tag loads Argide on your site. It shows as a floating chat widget or as a copilot sidebar, depending on the mode you pick in the dashboard. You control it from your own code with `window.argide` commands.
 
-Choose your preferred installation method:
+## Before you start
 
-<Tabs>
-  <Tab title="Script Tag">
-    Add the script before `</body>`:
+The widget only loads on your product's **Website** and its subdomains. Set it in **Settings** → **Products**. Until a Website is set, the widget loads nowhere, and **Deploy** → **Install** shows a warning saying so.
 
-    <CodeGroup>
-      ```html HTML
-      <script
-        src="https://dashboard.argide.ai/argide-b2b.iife.js"
-        data-api-url="https://api.argide.ai"
-        data-product-id="YOUR_PRODUCT_ID"
-      ></script>
-      ```
+| Website in the dashboard | Loads on | Doesn't load on |
+| --- | --- | --- |
+| `https://example.com` | `example.com`, `www.example.com`, `app.example.com` | `notexample.com`, `http://example.com`, `localhost` |
+| `https://www.example.com` | Same as above. A leading `www.` is ignored. | Same as above |
+| `http://example.com` | `http://` and `https://` on `example.com` and its subdomains | Other domains |
+| `https://myapp.vercel.app` | `myapp.vercel.app`, `www.myapp.vercel.app` | Any other `*.vercel.app` site, including preview deployments |
 
-      ```jsx Next.js
-      import Script from 'next/script'
+On shared hosting domains — `vercel.app`, `netlify.app`, `pages.dev`, `github.io`, `myshopify.com`, `web.app`, `firebaseapp.com`, and `onrender.com` — subdomains are other people's sites. There, only the exact host and its `www.` form match.
 
-      export default function Layout({ children }) {
-        return (
-          <>
-            {children}
-            <Script
-              src="https://dashboard.argide.ai/argide-b2b.iife.js"
-              data-api-url="https://api.argide.ai"
-              data-product-id="YOUR_PRODUCT_ID"
-              strategy="afterInteractive"
-            />
-          </>
-        )
-      }
-      ```
-    </CodeGroup>
+<Warning>
+  There is no exception for `localhost`, staging, or preview URLs. On a page outside your Website, the Argide bundle request returns `403` and nothing renders. To test somewhere else, use a separate product whose Website is that origin, such as `http://localhost:3000`. The port must match.
+</Warning>
 
-    | Attribute          | Required | Description                                                                    |
-    | ------------------ | -------- | ------------------------------------------------------------------------------ |
-    | `data-product-id`  | Yes      | Your product ID from dashboard                                                 |
-    | `data-api-url`     | No       | Defaults to `https://api.argide.ai`                                            |
-    | `data-user-id`     | No       | Your own ID for the user. See [User Identification](/setup/user-identification) |
-    | `data-name`        | No       | The user's name. See [User Identification](/setup/user-identification)          |
-    | `data-email`       | No       | The user's email. See [User Identification](/setup/user-identification)         |
-    | `data-visibility`  | No       | Set to `"false"` to defer the widget. See [Visibility](/agent/visibility)       |
+## Add the script
 
-    The agent's display name comes from your dashboard settings, not from the script tag.
+Open **Deploy** → **Install** and copy the snippet under **Add the script**. It already contains your Product ID. Paste it just before the closing `</body>` tag on every page where the agent should appear.
 
-    After the script loads, use `window.argide()` to pass functions and objects:
+<CodeGroup>
 
-    | Command                    | Description                                                                     |
-    | -------------------------- | ------------------------------------------------------------------------------- |
-    | `update`                   | User attributes and visibility. See [Identity](#user-identity)                   |
-    | `identify`                 | JWT token for authenticated API calls. See [Identity](#user-identity)            |
-    | `registerTools`            | Client-side tool handlers                                                       |
-    | `setNavigate`              | SPA navigation function for internal links (widget mode only)                   |
-    | `resetAndClearSession`     | Clear the identity, conversation, and session — use on logout                    |
-    | `resetAndPreserveSession`  | Clear the identity but keep the current conversation                            |
-  </Tab>
+```html HTML
+<script>window.argide = window.argide || [];</script>
+<script
+  src="https://dashboard.argide.ai/argide-b2b.iife.js"
+  data-product-id="YOUR_PRODUCT_ID"
+  data-api-url="https://api.argide.ai"
+></script>
+```
 
-  <Tab title="React SDK">
-    Install the SDK:
+```tsx Next.js — app/layout.tsx
+import Script from "next/script";
 
-    ```bash
-    npm install @argide/react-chat
-    ```
-
-    Add to your app:
-
-    ```tsx
-
-    import { ArgideWidget } from '@argide/react-chat';
-    import '@argide/react-chat/styles.css';
-
-    export function ArgideWidgetClient() {
-      return (
-        <ArgideWidget
-          productId="YOUR_PRODUCT_ID"
-          apiUrl="https://api.argide.ai"
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <Script id="argide-queue" strategy="beforeInteractive">
+          {"window.argide = window.argide || [];"}
+        </Script>
+        <Script
+          src="https://dashboard.argide.ai/argide-b2b.iife.js"
+          data-product-id="YOUR_PRODUCT_ID"
+          data-api-url="https://api.argide.ai"
+          strategy="afterInteractive"
         />
-      );
-    }
-    ```
+      </body>
+    </html>
+  );
+}
+```
 
-    The agent's display name comes from your dashboard settings.
+</CodeGroup>
 
-    | Prop               | Required | Description                                                                                                       |
-    | ------------------ | -------- | ----------------------------------------------------------------------------------------------------------------- |
-    | `productId`        | Yes      | Your product ID from dashboard                                                                                    |
-    | `apiUrl`           | Yes      | `https://api.argide.ai`                                                                                         |
-    | `getIdentityToken` | No       | Async function returning a JWT. Called on mount — the SDK does not re-call it when the token expires. See [Identity Verification](/integration/identity-verification) |
-    | `context`          | No       | Page context object sent with every message. Reactive — updates when the object changes                           |
-    | `toolRenderers`    | No       | Map of tool name → React component for inline rendering. See [Tool Renderers](/integration/tool-renderers)        |
-    | `onToolResult`     | No       | Callback `(toolName, result) => void` fired when a server-side tool completes                                     |
-    | `navigate`         | No       | SPA navigation function (e.g. `router.push`) for internal links                                                  |
+The first line creates a queue, so your code can send commands before Argide finishes loading. See [Send commands before the widget loads](#send-commands-before-the-widget-loads).
 
-    <Accordion title="Copilot Sidebar">
-      A full-height sidebar that automatically pushes your page content aside. Wrap your app with `ArgideProvider` and place `ArgideCopilot` alongside your app:
+Your Product ID is also listed on the product's card in **Settings** → **Products**.
 
-      ```bash
-      npm install @argide/react-chat
-      ```
+### Script attributes
 
-      ```tsx
-      import { ArgideProvider, ArgideCopilot } from '@argide/react-chat';
-      import '@argide/react-chat/styles.css';
+| Attribute | Required | Description |
+| --- | --- | --- |
+| `data-product-id` | Yes | Your Product ID. Without it, nothing loads. |
+| `data-api-url` | No | The Argide API. Defaults to `https://api.argide.ai`. |
+| `data-mode` | No | `widget` or `copilot`. Forces a mode and ignores the dashboard setting. |
+| `data-visibility` | No | Set to `"false"` to load the widget hidden. See [Visibility](/agent/visibility). |
+| `data-user-id` | No | Your ID for the signed-in user. See [User identification](/setup/user-identification). |
+| `data-name` | No | The user's name. |
+| `data-email` | No | The user's email. |
 
-      function App() {
-        return (
-          <ArgideProvider
-            productId="YOUR_PRODUCT_ID"
-            apiUrl="https://api.argide.ai"
-          >
-            <YourApp />
-            <ArgideCopilot position="right" width={400} />
-          </ArgideProvider>
-        );
-      }
-      ```
-    </Accordion>
-  </Tab>
-</Tabs>
+The agent's name, welcome message, and look come from the dashboard, not from the script tag. See [Identity and instructions](/agent/identity-instructions) and [Mode and design](/agent/mode-design).
 
-## Find Your Product ID
+## Choose widget or copilot
 
-1. In the [dashboard](https://dashboard.argide.ai/dashboard), open **Deploy → Install**
-2. Copy your Product ID
+| Mode | Dashboard label | What users see |
+| --- | --- | --- |
+| Widget | **Regular** | A chat bubble in the bottom corner that expands into a chat panel |
+| Copilot | **Copilot** | A full-height sidebar beside your app, on the left or right |
 
----
+Pick the mode under **Choose how it appears** on **Deploy** → **Install**. It saves as soon as you click. You can also change it, along with the copilot's side, in **Agent** → **Mode**. The script tag stays the same in both modes, and the change applies on the next page load.
 
-## User Identity
+On screens 768px wide or narrower, copilot mode falls back to the widget layout.
 
-There are two ways to tell the agent who the user is. Pick based on what you need.
+To pin a mode in code, for example to run your own A/B test, add `data-mode="widget"` or `data-mode="copilot"` to the script tag. A forced mode overrides the dashboard setting on that page.
 
-| You want                                          | Use                | Backend needed |
-| ------------------------------------------------- | ------------------ | -------------- |
-| The user's name on their conversations            | `data-*` or `update` | No             |
-| The agent to call your API on the user's behalf   | `identify`         | Yes            |
+## Content Security Policy
 
-**Attributes** — pass the user on the script tag, or with the `update` command in a single-page app:
+If your Content Security Policy uses nonces, add your nonce to both `<script>` tags in the snippet. The loader passes its nonce on to the Argide bundle it injects.
+
+```html
+<script nonce="YOUR_NONCE">window.argide = window.argide || [];</script>
+<script
+  nonce="YOUR_NONCE"
+  src="https://dashboard.argide.ai/argide-b2b.iife.js"
+  data-product-id="YOUR_PRODUCT_ID"
+  data-api-url="https://api.argide.ai"
+></script>
+```
+
+Your policy must also allow scripts from `https://dashboard.argide.ai` and requests to `https://api.argide.ai`.
+
+## Control the widget with `window.argide`
+
+Once Argide has loaded, `window.argide` is a function that takes a command name and an optional payload:
 
 ```javascript
-window.argide('update', {
-  user_id: 'usr_8241',
-  name: 'Ada Lovelace',
-  email: 'ada@example.com',
+window.argide('update', { name: 'Ada Lovelace' });
+```
+
+| Command | Payload | What it does |
+| --- | --- | --- |
+| `update` | Object | Sets user attributes (`user_id`, `name`, `email`, and custom keys) and `visibility`. See [User identification](/setup/user-identification). |
+| `identify` | `{ token, name? }` | Sends a signed JWT so the agent can call your API as this user. See [Identity verification](/integration/identity-verification). |
+| `resetAndClearSession` | None | Clears the user's identity and starts a new, anonymous session with an empty conversation. Call it on logout. |
+| `resetAndPreserveSession` | None | Clears the user's identity and revokes their JWT, but keeps the current conversation. |
+| `setNavigate` | Function `(path) => void` | Gives the widget your single-page app's router, so the agent navigates without a full page reload. Widget mode only. See [Page navigation](/agent/page-navigation). |
+
+<Note>
+  `resetUser` still works as an alias for `resetAndPreserveSession`, but it is deprecated and logs a console warning.
+</Note>
+
+### Send commands before the widget loads
+
+Argide loads asynchronously, so your code may run before `window.argide` is a function. Until then, `window.argide` is the queue array the snippet created. Push `[command, payload]` pairs onto it, and Argide runs them in order once it loads:
+
+```javascript
+window.argide = window.argide || [];
+window.argide.push(['update', { user_id: 'usr_8241', name: 'Ada Lovelace' }]);
+```
+
+After Argide loads, `window.argide` is replaced by the function, and `push` no longer exists. If your code can run at either moment, use a small helper that handles both:
+
+```javascript
+function sendArgideCommand(command, payload) {
+  if (typeof window.argide === 'function') {
+    window.argide(command, payload);
+  } else {
+    (window.argide = window.argide || []).push([command, payload]);
+  }
+}
+
+sendArgideCommand('update', { user_id: 'usr_8241', name: 'Ada Lovelace' });
+```
+
+Every command can be queued except `setNavigate`. Call it only once `window.argide` is a function:
+
+```javascript
+function whenArgideReady(callback, attempts = 100) {
+  if (typeof window.argide === 'function') return callback();
+  if (attempts > 0) setTimeout(() => whenArgideReady(callback, attempts - 1), 100);
+}
+
+whenArgideReady(() => {
+  window.argide('setNavigate', (path) => router.push(path));
 });
 ```
 
-See [User Identification](/setup/user-identification) for the full set of attributes, custom attributes, and single-page app setup.
-
-**JWT** — mint a token on your backend and pass it, so Argide can forward it to your API:
-
-```javascript
-window.argide('identify', { token: 'jwt-from-your-backend' });
-```
-
-See [Identity Verification](/integration/identity-verification) for the backend JWT setup.
-
-On logout, clear the identity:
-
-```javascript
-window.argide('resetAndClearSession');
-```
-
----
-
-## Client-Side Tools
-
-Register tools the agent can call. The return value from your handler is sent back to the agent, so it can confirm success or handle errors intelligently.
-
-See [Client-Side Tools](/integration/client-side-tools) for full setup.
-
-<Tabs>
-  <Tab title="Script Tag">
-    ```javascript
-    window.argide('registerTools', {
-      navigateToPage: async ({ path }) => {
-        router.push(path)
-        return { success: true }  // Agent sees this result
-      },
-
-      showUpgradeModal: async () => {
-        document.getElementById('upgrade-modal').showModal()
-        return { shown: true }
-      }
-    })
-    ```
-  </Tab>
-
-  <Tab title="React SDK">
-    ```tsx
-    import { ArgideWidget } from '@argide/react-chat';
-
-    function App() {
-      const tools = {
-        navigateToPage: async ({ path }) => {
-          router.push(path);
-          return { success: true };  // Agent sees this result
-        },
-
-        showUpgradeModal: async () => {
-          document.getElementById('upgrade-modal').showModal();
-          return { shown: true };
-        }
-      };
-
-      return (
-        <ArgideWidget
-          productId="YOUR_PRODUCT_ID"
-          apiUrl="https://api.argide.ai"
-          tools={tools}
-        />
-      );
-    }
-    ```
-  </Tab>
-</Tabs>
-
-<Tip>
-  Return meaningful results from your tools. The agent uses these to provide accurate feedback like "Done! I've navigated you to Settings" or handle errors gracefully.
-</Tip>
-
----
-
-
-
-## Tool Result Callbacks
-
-React to server-side tool completions — refresh data, show a diff UI, dispatch events, etc.
-
-<Tabs>
-  <Tab title="Script Tag">
-    ```javascript
-    window.argide('onToolResult', (toolName, result) => {
-      if (toolName === 'propose_revision') {
-        showDiffUI(result);
-      }
-    });
-    ```
-  </Tab>
-
-  <Tab title="React SDK">
-    ```tsx
-    <ArgideWidget
-      onToolResult={(toolName, result) => {
-        if (toolName === 'propose_revision') showDiffUI(result);
-      }}
-      ...
-    />
-    ```
-  </Tab>
-</Tabs>
-
----
-
-## Tool Renderers
-
-Render custom visuals inline in the chat when a tool completes — data cards, tables, charts, and more.
-
-Your renderer receives `{ result, status }` and returns one of:
-
-| Return type     | Use case                                 |
-| --------------- | ---------------------------------------- |
-| **HTML string** | Data cards, tables, simple visuals       |
-| **HTMLElement** | Charts via Chart.js, D3, ECharts, Plotly |
-| **ReactNode**   | Full React components (React SDK only)   |
-
-<Tabs>
-  <Tab title="Script Tag">
-    ### Data Card
-
-    Show key metrics with change indicators:
-
-    ```javascript
-    window.argide('registerToolRenderers', {
-      query_analytics_chart: ({ result }) => {
-        const r = result || {};
-        const color = r.changePercent > 0 ? '#059669' : '#ef4444';
-        const arrow = r.changePercent > 0 ? '↑' : '↓';
-        return `<div style="padding:12px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; font-family:system-ui,sans-serif;">
-          <div style="font-size:13px; font-weight:600; color:#0f172a;">${r.title || 'Metric'}</div>
-          <div style="font-size:24px; font-weight:700; color:#2563eb; margin-top:4px;">${r.currentValue || 'N/A'}</div>
-          ${r.changePercent != null
-            ? `<div style="font-size:12px; color:${color};">${arrow} ${Math.abs(r.changePercent).toFixed(1)}%</div>`
-            : ''}
-          ${r.dashboard_url
-            ? `<a href="${r.dashboard_url}" target="_blank" style="font-size:11px; color:#2563eb; text-decoration:none; margin-top:8px; display:inline-block;">View full chart ↗</a>`
-            : ''}
-        </div>`;
-      }
-    });
-    ```
-
-    ### Table
-
-    Display structured data in rows and columns:
-
-    ```javascript
-    window.argide('registerToolRenderers', {
-      query_data_table: ({ result }) => {
-        const r = result || {};
-        const headers = r.columns || [];
-        const rows = r.rows || [];
-        return `<div style="border:1px solid #e2e8f0; border-radius:8px; overflow:hidden; font-family:system-ui,sans-serif;">
-          <table style="width:100%; border-collapse:collapse; font-size:12px;">
-            <thead>
-              <tr style="background:#f8fafc;">
-                ${headers.map(h =>
-                  '<th style="padding:8px 12px; text-align:left; font-weight:600; border-bottom:1px solid #e2e8f0;">' + h + '</th>'
-                ).join('')}
-              </tr>
-            </thead>
-            <tbody>
-              ${rows.map(row =>
-                '<tr style="border-bottom:1px solid #f1f5f9;">' +
-                  row.map(cell =>
-                    '<td style="padding:6px 12px; color:#334155;">' + cell + '</td>'
-                  ).join('') +
-                '</tr>'
-              ).join('')}
-            </tbody>
-          </table>
-        </div>`;
-      }
-    });
-    ```
-
-    ### Chart (Chart.js, D3, ECharts)
-
-    For interactive charts, return an **HTMLElement** instead of a string. The widget mounts it directly:
-
-    ```html
-    <!-- Load Chart.js (or any charting library) -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <script>
-    window.argide('registerToolRenderers', {
-      query_analytics_chart: ({ result }) => {
-        const canvas = document.createElement('canvas');
-        canvas.style.width = '100%';
-        canvas.style.maxHeight = '200px';
-        new Chart(canvas, {
-          type: 'line',
-          data: {
-            labels: result.data.map(d => d.date),
-            datasets: [{
-              label: result.title,
-              data: result.data.map(d => d.value),
-              borderColor: '#2563eb',
-              tension: 0.3,
-            }]
-          },
-          options: { responsive: true, plugins: { legend: { display: false } } }
-        });
-        return canvas;  // Return the DOM element
-      }
-    });
-    </script>
-    ```
-
-    <Warning>
-      **Timing:** `window.argide()` must be called **after** the Argide script has loaded. In plain HTML this happens naturally (scripts execute in order). In Next.js, use `onLoad`:
-
-      ```jsx
-      <Script
-        src="https://dashboard.argide.ai/argide-b2b.iife.js"
-        data-product-id="YOUR_PRODUCT_ID"
-        data-api-url="https://api.argide.ai"
-        strategy="afterInteractive"
-        onLoad={() => {
-          window.argide('registerToolRenderers', { ... });
-        }}
-      />
-      ```
-    </Warning>
-
-    <Tip>
-      The widget uses Shadow DOM for CSS isolation. Use inline `style` attributes — Tailwind classes and external CSS won't apply inside the widget.
-    </Tip>
-  </Tab>
-
-  <Tab title="React SDK">
-    React SDK renderers return **JSX** — full React components with hooks, state, and libraries like Recharts:
-
-    ```tsx
-    <ArgideWidget
-      toolRenderers={{
-        query_analytics_chart: ({ result }) => <MyChart data={result.data} />,
-      }}
-      ...
-    />
-    ```
-  </Tab>
-</Tabs>
-
----
+Here `router` is your app's router. The helper stops checking after 10 seconds, so it doesn't poll forever if Argide fails to load.
 
 ## Troubleshooting
 
-| Issue                | Solution                                              |
-| -------------------- | ----------------------------------------------------- |
-| Widget not appearing | Check Product ID, verify script/component is rendered |
-| Console errors       | Check `apiUrl` is correct                             |
-| CORS errors          | Contact support to whitelist your domain              |
+Argide logs to the browser console with an `[Argide-B2B]` prefix. Start there.
+
+| Symptom | Cause and fix |
+| --- | --- |
+| Nothing renders, the network tab shows `403` for `argide-b2b-widget.iife.js` or `argide-b2b-copilot.iife.js`, and the console shows `loader: failed to load Argide` | The page's domain isn't your Website or one of its subdomains. Fix the **Website URL** in **Settings** → **Products**. See [Before you start](#before-you-start). |
+| Your domain is listed under **Verify installation**, but no widget appears | Same cause. Argide records the domain before it checks it against your Website. |
+| Nothing renders on `localhost` or a preview deployment | Expected. Those origins don't match your Website. |
+| Nothing renders on any page | **Deploy** → **Install** shows a warning if no Website is set. Set one in **Settings** → **Products**. |
+| `loader: data-product-id is required` | Add `data-product-id` to the script tag. |
+| `loader: could not find script element` | Keep the original script tag. Its `src` must still contain `argide-b2b` and it must carry `data-product-id`. |
+| `loader: failed to fetch config` | The loader couldn't reach the API, so it fell back to widget mode, or to your `data-mode` if set. Check `data-api-url`. |
+| `window.argide is not a function` | Your code ran before Argide loaded. Queue the command, or use the helper above. |
+| `window.argide.push is not a function` | Your code ran after Argide loaded. Call `window.argide(...)` directly, or use the helper above. |
+| The mode doesn't match the dashboard | A `data-mode` attribute is forcing it. Remove it to follow the dashboard. |
+| Copilot shows as a chat bubble on a phone | Expected. Copilot falls back to the widget layout at 768px wide or narrower. |
+| The widget doesn't show, but no errors appear | Check for `data-visibility="false"` or an `update` call with `visibility: false`. See [Visibility](/agent/visibility). |
+| `ArgideSettings update failed` | Argide rejected the user attributes, for example because `email` isn't a valid address. See [User identification](/setup/user-identification). |

@@ -1,60 +1,131 @@
 ---
-title: "Website"
-description: "Crawl and index your website"
+title: "Website & help center"
+description: "Crawl your app to build navigation routes, and your docs to answer questions"
 ---
 
-Automatically crawl your website so your agent can reference its content.
+The **Knowledge Base** page has two crawl sections. They look alike but do different jobs:
 
-## Setup
+| Section | Crawl this | What you get |
+| --- | --- | --- |
+| **Website** | Your web app or product site | Navigation routes the agent uses to take users to the right page. No answer content. |
+| **Help center & docs** | Your help center or documentation site | Content the agent answers questions from. No navigation routes. |
 
-1. Enter your website URL (e.g., `https://docs.yourcompany.com`)
-2. Click **Ingest**
-3. Argide crawls linked pages on the same domain
+Both crawlers render JavaScript, so single-page apps and client-rendered docs work. Both can crawl public sites or sites behind a login.
 
-## What Gets Crawled
+## Start a crawl
 
-### Included
+Each section has two modes: **Public site** and **Login-protected site**. Pick the one that matches the site, then follow the steps.
 
-- Publicly accessible pages
-- Pages linked from starting URL
-- Same domain only
-- Protected/authenticated pages (via embedded browser login)
+<Tabs>
+  <Tab title="Public site">
+    <Steps>
+      <Step title="Enter the URL">
+        Click **Public site** and enter the address in **Website URL** (or **Help center or docs URL**), for example `https://docs.example.com`.
+      </Step>
+      <Step title="Set a page limit (optional)">
+        Enter a number in **Max pages (optional)** to cap the crawl. Leave it empty to use the default of 2,000 pages, which is also the maximum.
+      </Step>
+      <Step title="Start the crawl">
+        Click **Ingest Content**. Progress appears under **Ingestion progress**.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="Login-protected site">
+    <Steps>
+      <Step title="Enter the URL">
+        Click **Login-protected site**, enter the site's address, and optionally set **Max pages (optional)**.
+      </Step>
+      <Step title="Open the browser">
+        Click **Open Browser**. A live browser opens inside the dashboard.
+      </Step>
+      <Step title="Log in">
+        Sign in to your site inside that browser, the same way your users do.
+      </Step>
+      <Step title="Start the crawl">
+        Click **I'm logged in — Start Crawl**. The crawler uses that signed-in session, so it sees the pages a logged-in user sees.
+      </Step>
+    </Steps>
 
-### Not Included
+    Click **Cancel session** to close the browser without crawling. Only one browser session can be open per product at a time.
+  </Tab>
+</Tabs>
 
-- Pages blocked by `robots.txt`
-- External domains
-- JavaScript-rendered content
+A crawl can take several minutes on a large site. You can leave the page; when you come back, the progress panel picks the crawl up again.
 
-## Crawling Protected Pages
+### What gets skipped
 
-If your docs or website requires a login, Argide includes an **embedded browser** in the dashboard so you can authenticate before crawling.
+Both crawlers stay on the domain you enter and skip pages that never hold useful content, including:
 
-### How it works
+- Sign-out, sign-up, SSO, two-factor and email-verification pages
+- Changelogs, release notes, "what's new" and roadmap pages
+- Feeds, sitemaps, build assets, images, video and other binary files
 
-1. Go to **Knowledge Base → Website**
-2. An embedded browser loads your URL
-3. Log in to your website inside that browser as you normally would
-4. Once logged in, click **Start Crawling**
+PDFs linked from a **Help center & docs** site are read like any other page. The **Website** crawl skips them.
 
-The crawler runs in the context of that authenticated session, so it can access the same pages your logged-in users see.
+## Website
 
-<Info>
-  You don't need to copy cookies or configure any headers — just log in and crawl.
-</Info>
+The **Website** crawl maps your app so the agent can [navigate users](/agent/page-navigation) to the right page. It covers the whole domain, even if the URL you enter is a deep page such as your login screen.
 
-## Re-indexing
+When the crawl finishes, you see **Crawl complete — N pages scanned. Review the discovered routes below.**
 
-When content changes:
+### Review and save routes
 
-1. In the [dashboard](https://dashboard.argide.ai/dashboard), open **Knowledge Base → Website**
-2. Enter URL again
-3. Click **Ingest**
+Discovered routes don't go live on their own. They land in the **Review discovered routes** panel below the crawl form, marked as new, changed, or unchanged.
 
-<Info>
-  Re-indexing replaces previous content.
-</Info>
+1. Edit the **Name** or **Description** of any route, or drop routes you don't want.
+2. Click **Save routes**.
 
-## Tip
+Saving routes requires the [admin role](/organization/members). After you save, a **View generated routes** link takes you to **Tools** → **Page Navigation**.
 
-- Use your **docs subdomain** for focused content (`docs.yourcompany.com`)
+On a re-crawl, routes you added by hand are kept, and routes the crawl didn't find this time stay live unless you remove them. [Page navigation](/agent/page-navigation) covers route review, editing and manual routes in full.
+
+<Note>
+  Only one **Website** crawl can run per product at a time. Starting a second one returns **A crawl for this product is already in progress.**
+</Note>
+
+## Help center & docs
+
+The **Help center & docs** crawl reads your support content into the knowledge base so the agent can answer questions from it.
+
+It stays inside the path you enter. Crawling `https://example.com/docs` covers `/docs` and the pages below it, not the rest of the site. Point it at the root of your help center or docs to include everything.
+
+When the crawl finishes, you see **Ingestion complete: N pages crawled, M chunks stored.** The content is available to the agent right away.
+
+You can crawl several help centers or docs sites. Each URL can have one crawl running at a time.
+
+## Manage crawled sites
+
+Each section lists its sites under **Ingested Websites**, with the page count, last crawl time, and status.
+
+| Status | Meaning |
+| --- | --- |
+| **Completed** | The crawl finished. |
+| **Failed** | The crawl stopped. The row shows the reason. |
+| **Needs attention** | The crawl failed and Argide stopped retrying. Fix the cause, then re-crawl. |
+
+### Re-crawl a site
+
+Click **Re-crawl** next to the site to pick up changes. Nothing re-crawls on a schedule.
+
+- **Public sites** start crawling right away, with the default limit of 2,000 pages. To re-crawl with a lower limit, start a new crawl of the same URL with **Max pages (optional)** set.
+- **Login-protected sites** reopen the live browser so you can sign in again, then click **I'm logged in — Start Crawl**.
+- **Website** re-crawls send new and changed routes to **Review discovered routes**. Nothing changes until you click **Save routes**.
+
+### Remove a site
+
+Click the trash icon (**Remove website**) next to the site.
+
+- Removing a **Website** site also removes the navigation routes generated from its pages.
+- Removing a **Help center & docs** site removes its content from the knowledge base. The agent stops answering from it.
+
+You can't remove a site while it's being crawled.
+
+## Troubleshooting
+
+| Message | What to do |
+| --- | --- |
+| **We couldn't find any readable pages at that address.** | Check the URL is correct and loads without signing in. If it needs an account, use **Login-protected site**. |
+| **The crawl stopped before it finished.** | The site may block crawlers. Try again, or use **Login-protected site**. |
+| **The site is limiting how quickly we can read it.** | Wait a few minutes and re-crawl. |
+| **No cookies found. Make sure you logged in before starting the crawl.** | Finish signing in inside the live browser before you click **I'm logged in — Start Crawl**. |
+| **A browser session is already active. Please complete or cancel it first.** | Finish or cancel the open login session, then try again. |
